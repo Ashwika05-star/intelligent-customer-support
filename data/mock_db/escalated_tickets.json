@@ -1,0 +1,22 @@
+[
+  {
+    "ticket_id": "TICK-414A34",
+    "created_at": "2026-10-27 11:32:55",
+    "customer_query": "Can you ship a submarine engine to Antarctica tomorrow?",
+    "reason": "Automated knowledge retrieval failed to find verified documentation (Confidence: 0.15).",
+    "sentiment": "neutral",
+    "order_id": null,
+    "status": "OPEN",
+    "agent_response": null
+  },
+  {
+    "ticket_id": "TICK-A543BA",
+    "created_at": "2026-10-27 11:32:00",
+    "customer_query": "I demand to speak to a real human manager right now!",
+    "reason": "Customer explicitly requested a human specialist or expressed frustration.",
+    "sentiment": "frustrated",
+    "order_id": null,
+    "status": "OPEN",
+    "agent_response": null
+  }
+]

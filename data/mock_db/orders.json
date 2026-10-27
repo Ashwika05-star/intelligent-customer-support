@@ -1,0 +1,72 @@
+{
+  "ORD-98214": {
+    "order_id": "ORD-98214",
+    "customer_name": "Sarah Connor",
+    "email": "sarah.c@example.com",
+    "order_date": "2026-10-22",
+    "status": "In Transit",
+    "carrier": "FedEx",
+    "tracking_number": "FX-7789123401",
+    "estimated_delivery": "2026-10-29",
+    "shipping_address": "742 Evergreen Terrace, Springfield, OR",
+    "items": [
+      {
+        "product_id": "AS-900",
+        "product_name": "AuraSound Pro ANC Wireless Headphones",
+        "quantity": 1,
+        "price": 199.99
+      }
+    ],
+    "total_amount": 199.99,
+    "payment_method": "Credit Card (ending 4242)",
+    "return_eligible": false,
+    "return_ineligibility_reason": "Order has not yet been delivered."
+  },
+  "ORD-76150": {
+    "order_id": "ORD-76150",
+    "customer_name": "David Miller",
+    "email": "david.m@example.com",
+    "order_date": "2026-10-05",
+    "status": "Delivered",
+    "carrier": "UPS",
+    "tracking_number": "1Z999AA10123456784",
+    "delivery_date": "2026-10-09",
+    "shipping_address": "1204 Pine Valley Rd, Austin, TX",
+    "items": [
+      {
+        "product_id": "AC-X9",
+        "product_name": "ApexClean X9 Smart Robot Vacuum & Mop",
+        "quantity": 1,
+        "price": 499.00
+      }
+    ],
+    "total_amount": 499.00,
+    "payment_method": "PayPal",
+    "return_eligible": true,
+    "days_since_delivery": 18,
+    "return_window_deadline": "2026-11-08"
+  },
+  "ORD-43209": {
+    "order_id": "ORD-43209",
+    "customer_name": "Elena Rostova",
+    "email": "elena.r@example.com",
+    "order_date": "2026-08-15",
+    "status": "Delivered",
+    "carrier": "USPS",
+    "tracking_number": "94001118992231002345",
+    "delivery_date": "2026-08-19",
+    "shipping_address": "88 Market Street, San Francisco, CA",
+    "items": [
+      {
+        "product_id": "EC-MAX",
+        "product_name": "ErgoComfort Max Ergonomic Office Chair",
+        "quantity": 1,
+        "price": 349.50
+      }
+    ],
+    "total_amount": 349.50,
+    "payment_method": "Credit Card (ending 8819)",
+    "return_eligible": false,
+    "return_ineligibility_reason": "Exceeded the 30-day standard return window (delivered over 60 days ago). Warranty coverage remains active."
+  }
+}
