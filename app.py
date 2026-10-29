@@ -48,10 +48,10 @@ st.markdown("""
         background-attachment: fixed;
     }
 
-    /* Sidebar Styling */
+    /* Sidebar Styling - Distinct Twilight Lavender Panel */
     section[data-testid="stSidebar"] {
-        background-color: #eef5fc !important;
-        border-right: 2px solid var(--periwinkle) !important;
+        background: linear-gradient(180deg, #eae3f4 0%, #e4daf1 100%) !important;
+        border-right: 2px solid var(--rich-violet) !important;
     }
     section[data-testid="stSidebar"] h1, 
     section[data-testid="stSidebar"] h2, 
@@ -333,7 +333,7 @@ if "session_thread_id" not in st.session_state:
 # ----------------- SIDEBAR -----------------
 with st.sidebar:
     st.markdown("""
-    <div style='padding-bottom: 12px; border-bottom: 2px solid #88A2FF; margin-bottom: 16px;'>
+    <div style='padding-bottom: 12px; border-bottom: 2px solid #AB9DFF; margin-bottom: 16px;'>
         <div style='font-weight: 800; font-size: 1.25rem; color: #253A82; letter-spacing: -0.02em;'>NOVAMART</div>
         <div style='display: inline-block; background-color: #E3FC87; color: #253A82; font-size: 0.72rem; font-weight: 800; padding: 2px 8px; border-radius: 12px; margin-top: 4px; border: 1px solid #253A82;'>CONTROL CONSOLE</div>
     </div>
