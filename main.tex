@@ -11,11 +11,10 @@
 \usepackage{url}
 \usepackage{caption}
 \usepackage{subcaption}
-\usepackage{tikz}
 \usepackage{fancyhdr}
 \usepackage{titlesec}
 \usepackage{tabularx}
-\usetikzlibrary{shapes.geometric, arrows.meta, positioning, calc}
+\usepackage{float} % Enforces [H] exact placement (Description followed immediately by Image)
 
 % --- Page Header & Footer ---
 \pagestyle{fancy}
@@ -33,7 +32,7 @@
     citecolor=black
 }
 
-% --- Section Styling (100% BLACK Headings) ---
+% --- Section Styling (100% PURE BLACK Headings) ---
 \titleformat{\section}{\large\bfseries\color{black}}{\thesection}{1em}{}
 \titleformat{\subsection}{\normalsize\bfseries\color{black}}{\thesubsection}{1em}{}
 \titleformat{\subsubsection}{\small\bfseries\color{black}}{\thesubsubsection}{1em}{}
@@ -65,25 +64,32 @@
 }
 \lstset{style=mystyle}
 
-% --- Document Title & Perfectly Centered Authors (No Job Titles) ---
+% --- Document Title & Perfectly Centered Authors (5 Students, No Job Titles) ---
 \title{\vspace{-1.2cm}\textbf{\Large Intelligent Customer Support Agent}\\[0.2cm]
 \large A Corrective RAG (CRAG) and Human-in-the-Loop Architecture using LangGraph}
 
 \author{
-\begin{tabular}{c @{\hspace{1.2cm}} c @{\hspace{1.2cm}} c}
+\begin{minipage}{0.96\textwidth}
+\centering
+\begin{tabular}{c @{\hspace{1.5cm}} c @{\hspace{1.5cm}} c}
 \textbf{Student 1} & \textbf{Student 2} & \textbf{Student 3} \\
 Roll No: [Your ID 1] & Roll No: [Your ID 2] & Roll No: [Your ID 3] \\
 student1@university.edu & student2@university.edu & student3@university.edu
 \end{tabular}
-\\[0.4cm]
-\begin{tabular}{c @{\hspace{1.5cm}} c}
+
+\vspace{0.35cm}
+
+\begin{tabular}{c @{\hspace{1.8cm}} c}
 \textbf{Student 4} & \textbf{Student 5} \\
 Roll No: [Your ID 4] & Roll No: [Your ID 5] \\
 student4@university.edu & student5@university.edu
 \end{tabular}
-\\[0.4cm]
+
+\vspace{0.4cm}
+
 \textit{Department of Computer Science \& Engineering}\\
 \textit{Institution / University Name}
+\end{minipage}
 }
 \date{October 2026}
 
@@ -148,72 +154,19 @@ class SupportAgentState(TypedDict):
 \end{lstlisting}
 
 \subsection{System Workflow Flowchart}
-Figure~\ref{fig:flowchart} illustrates the LangGraph decision-making architecture. Every pathway is placed with explicit spacing and white label badges to ensure completely clean, non-overlapping routing.
+Figure~\ref{fig:flowchart} illustrates the LangGraph decision-making architecture. Clean space is allocated for the generated flowchart diagram, detailing intent classification, partitioned retrieval namespaces, Corrective RAG verification, and automated Human-in-the-Loop escalation.
 
-\begin{figure}[htbp]
+\begin{figure}[H]
 \centering
-\resizebox{0.96\linewidth}{!}{
-\begin{tikzpicture}[
-    >=Stealth,
-    font=\small,
-    box/.style={rectangle, rounded corners=3pt, draw=black!85, thick, text width=2.9cm, align=center, minimum height=1.0cm},
-    startbox/.style={box, fill=blue!10},
-    procbox/.style={box, fill=orange!12},
-    toolbox/.style={box, fill=teal!12},
-    retbox/.style={box, fill=green!12, text width=2.6cm},
-    genbox/.style={box, fill=purple!12},
-    escbox/.style={box, fill=red!15, text width=2.7cm},
-    chatbox/.style={box, fill=gray!15, text width=2.5cm},
-    decision/.style={diamond, aspect=1.9, draw=black!85, thick, fill=yellow!20, align=center, text width=1.8cm, inner sep=1pt},
-    evalbox/.style={diamond, aspect=1.9, draw=black!85, thick, fill=red!12, align=center, text width=2.1cm, inner sep=1pt},
-    lbl/.style={fill=white, inner sep=2pt, font=\scriptsize}
-]
-    % --- Main Center Spine (X = 0) ---
-    \node (start) [startbox] at (0, 0) {\textbf{Customer Query} ($q_t$)};
-    \node (classifier) [procbox] at (0, -1.8) {\textbf{1. Classifier Node}\\Intent \& Sentiment};
-    \node (rewriter) [procbox] at (0, -3.8) {\textbf{2. Query Rewriter}\\Coreference Resolution};
-    \node (domain) [decision] at (0, -5.6) {\textbf{Domain?}};
-    \node (ret_policy) [retbox] at (-2.3, -7.5) {\textbf{3A. Policy Retriever}\\Returns, Shipping, SLA};
-    \node (ret_manual) [retbox] at (2.3, -7.5) {\textbf{3B. Manual Retriever}\\Hardware Specs, Codes};
-    \node (grader) [evalbox] at (0, -9.6) {\textbf{4. CRAG Grader}\\$\text{Score} \ge 0.30$?};
-    \node (generator) [genbox] at (0, -11.6) {\textbf{5. Grounded Generator}\\Answer with Citations};
-    \node (deliver) [startbox] at (0, -13.4) {\textbf{Deliver Response}};
-
-    % --- Left Column (Human Escalation) ---
-    \node (escalator) [escbox] at (-5.6, -5.6) {\textbf{Human Escalation}\\Priority Ticket (HITL)};
-
-    % --- Right Column (Chitchat & Order Tool) ---
-    \node (chitchat) [chatbox] at (5.4, -1.8) {\textbf{Chitchat Node}\\Greetings / Thanks};
-    \node (order) [toolbox] at (5.4, -4.6) {\textbf{Order DB Tool}\\Status \& Return Check};
-
-    % --- Center Pipeline Arrows ---
-    \draw[->, thick] (start) -- (classifier);
-    \draw[->, thick] (classifier) -- node[lbl] {support} (rewriter);
-    \draw[->, thick] (rewriter) -- (domain);
-    \draw[->, thick] (domain) -| node[lbl, pos=0.3] {policy} (ret_policy.north);
-    \draw[->, thick] (domain) -| node[lbl, pos=0.3] {manual} (ret_manual.north);
-    \draw[->, thick] (ret_policy.south) |- (grader.west);
-    \draw[->, thick] (ret_manual.south) |- (grader.east);
-    \draw[->, thick] (grader) -- node[lbl] {\textbf{Pass} ($\ge 0.30$)} (generator);
-    \draw[->, thick] (generator) -- (deliver);
-
-    % --- Left Side Escalation Routes (NO OVERLAPS) ---
-    \draw[->, thick] (classifier.west) -| node[lbl, pos=0.3] {anger / human} (escalator.north);
-    \draw[->, thick] (grader.west) -- ++(-1.2, 0) |- node[lbl, pos=0.3] {\textbf{Fail} ($\text{retry} \ge 1$)} (escalator.south);
-    \draw[->, thick] (escalator.west) -- ++(-0.6, 0) |- (deliver.west);
-
-    % --- Right Side Routes (NO OVERLAPS) ---
-    \draw[->, thick] (classifier.east) -- node[lbl] {chitchat} (chitchat.west);
-    \draw[->, thick] (chitchat.east) -- ++(1.8, 0) |- (deliver.east);
-    
-    % Order DB tool routing cleanly through open gap
-    \draw[->, thick] (classifier.east) ++(0, -0.3) -- ++(1.4, 0) |- node[lbl, pos=0.7] {order / return} (order.west);
-    \draw[->, thick] (order.south) -- ++(0, -3.8) |- (grader.east);
-
-    % Red Retry Loop routed on far outer-right lane (Clear of all boxes)
-    \draw[->, dashed, thick, red] (grader.south) ++(0.6, 0) -- ++(0, -0.5) -- ++(6.8, 0) -- ++(0, 7.3) -| node[lbl, pos=0.3] {\textbf{Retry} ($< 1$)} (rewriter.north east);
-
-\end{tikzpicture}
+\IfFileExists{flowchart.png}{%
+    \includegraphics[width=0.88\linewidth]{flowchart.png}%
+}{%
+    \fbox{\begin{minipage}[c][8.5cm][c]{0.92\linewidth}
+    \centering
+    \textbf{\large [Figure 1: Complete LangGraph State Machine Architecture]}\\[0.3cm]
+    \small (Upload \texttt{flowchart.png} to your Overleaf project to automatically display the high-resolution architecture diagram)\\[0.2cm]
+    \footnotesize \textit{Illustrates: Intent Classifier $\rightarrow$ Query Rewriter $\rightarrow$ Partitioned Retrievers $\rightarrow$ CRAG Grader with Retry Loop $\rightarrow$ Grounded Generator $\rightarrow$ Delivery / Escalation.}
+    \end{minipage}}%
 }
 \caption{Complete LangGraph State Machine Architecture: Zero-overlap layout detailing intent classification, partitioned retrieval namespaces, Corrective RAG verification, and automated Human-in-the-Loop escalation.}
 \label{fig:flowchart}
@@ -223,10 +176,10 @@ Figure~\ref{fig:flowchart} illustrates the LangGraph decision-making architectur
 \begin{enumerate}
     \item \textbf{Intent \& Sentiment Classifier (\texttt{classifier.py}):} Analyzes the query and previous dialogue to determine the intent category, sentiment (\textit{positive}, \textit{neutral}, \textit{frustrated}), and extracts order IDs matching \texttt{ORD-XXXXX}.
     \item \textbf{Contextual Query Rewriter (\texttt{rewriter.py}):} Solves conversational pronoun ambiguity by examining past assistant messages and reformulating queries into self-contained search targets.
-    \item \textbf{Dual-Partitioned Retrievers (\texttt{retrieval_nodes.py}):} Unstructured Markdown documents are partitioned into separate namespaces (\textit{Policies} vs. \textit{Product Manuals}) to avoid cross-domain vector contamination.
+    \item \textbf{Dual-Partitioned Retrievers (\texttt{retrieval\_nodes.py}):} Unstructured Markdown documents are partitioned into separate namespaces (\textit{Policies} vs. \textit{Product Manuals}) to avoid cross-domain vector contamination.
     \item \textbf{Corrective RAG Grader (\texttt{grader.py}):} Compares retrieved chunks against the standalone query. Chunks scoring below $\tau = 0.30$ trigger a query-reformulation retry before safely escalating to human support.
     \item \textbf{Grounded Generator (\texttt{generator.py}):} Synthesizes concise responses strictly grounded in verified context and appends verifiable section citations.
-    \item \textbf{Human Support Escalation (\texttt{escalation.py}):} Creates priority tickets (\texttt{TICK-XXXXXX}), logs sentiment and query context to \texttt{escalated_tickets.json}, and alerts the human operator.
+    \item \textbf{Human Support Escalation (\texttt{escalation.py}):} Creates priority tickets (\texttt{TICK-XXXXXX}), logs sentiment and query context to \texttt{escalated\_tickets.json}, and alerts the human operator.
 \end{enumerate}
 
 \section{Operational Action Tools \& Database Integration}
@@ -246,78 +199,86 @@ The system was engineered using Python 3.14 with an emphasis on production modul
 \end{itemize}
 
 \section{System User Interface \& Web Demonstration}
-The web application is implemented in \texttt{app.py} and serves three core interfaces. Large-format figures below represent the running system.
+The web application is implemented in \texttt{app.py} and serves three core interfaces. Each subsection below provides the technical description followed immediately by its corresponding full-width system screenshot.
 
 \subsection{Customer Support Chat with Grounded Citations}
-Figure~\ref{fig:chat_ui} illustrates the customer chat view. The assistant generates factual answers strictly grounded in official documents and appends clickable/expandable citations.
+Figure~\ref{fig:chat_ui} illustrates the customer-facing chat interface (Tab 1). The assistant synthesizes clear, direct answers strictly grounded in the official company policy corpus and appends expandable citation metadata identifying the source document and section.
 
-\begin{figure}[htbp]
+\begin{figure}[H]
 \centering
-% Once you upload your screenshot image to Overleaf, uncomment the line below:
-% \includegraphics[width=\linewidth]{screenshot1_chat.png}
-\fbox{\begin{minipage}[c][8.5cm][c]{0.96\linewidth}
-\centering
-\textbf{\large [Figure 1: Customer Support Chat with Citations]}\\[0.3cm]
-\small (Upload your full-width screenshot of Tab 1 to Overleaf as \texttt{screenshot1\_chat.png} and uncomment \texttt{\textbackslash includegraphics})\\[0.2cm]
-\footnotesize \textit{Shows customer query, grounded response, and expandable verified source citation badge.}
-\end{minipage}}
-\caption{Customer Chat Interface showing grounded policy response and expandable citations badge.}
+\IfFileExists{screenshot1_chat.png}{%
+    \includegraphics[width=0.92\linewidth]{screenshot1_chat.png}%
+}{%
+    \fbox{\begin{minipage}[c][6.0cm][c]{0.92\linewidth}
+    \centering
+    \textbf{\large [Figure 2: Customer Support Chat with Verified Citations]}\\[0.3cm]
+    \small (Upload screenshot to Overleaf as \texttt{screenshot1\_chat.png} to render image automatically)\\[0.2cm]
+    \footnotesize \textit{Demonstrates customer query handling, grounded markdown response, and expandable citation drawer.}
+    \end{minipage}}%
+}
+\caption{Customer Chat Interface showing grounded policy response and expandable verified citation badge.}
 \label{fig:chat_ui}
 \end{figure}
 
 \subsection{Multi-Turn Contextual Query Rewriting}
-Figure~\ref{fig:rewriter_ui} demonstrates coreference resolution across conversational turns. When a user asks \textit{``Does it support multipoint Bluetooth pairing?''}, the rewriter automatically injects \textit{``AuraSound Pro AS-900''}.
+Figure~\ref{fig:rewriter_ui} demonstrates coreference resolution across multi-turn conversational interactions. When a user asks an ambiguous follow-up question such as \textit{``Does it support multipoint Bluetooth pairing?''}, the rewriter automatically injects the active entity (\textit{``AuraSound Pro AS-900''}) before querying the vector retriever.
 
-\begin{figure}[htbp]
+\begin{figure}[H]
 \centering
-% Once you upload your screenshot image to Overleaf, uncomment the line below:
-% \includegraphics[width=\linewidth]{screenshot2_rewriter.png}
-\fbox{\begin{minipage}[c][8.5cm][c]{0.96\linewidth}
-\centering
-\textbf{\large [Figure 2: Multi-Turn Query Rewriting \& Disambiguation]}\\[0.3cm]
-\small (Upload your screenshot of the follow-up dialogue to Overleaf as \texttt{screenshot2\_rewriter.png} and uncomment \texttt{\textbackslash includegraphics})\\[0.2cm]
-\footnotesize \textit{Shows how the conversational agent remembers entity references across multi-turn queries.}
-\end{minipage}}
-\caption{Contextual Query Rewriting resolving ambiguous pronouns across turns.}
+\IfFileExists{screenshot2_rewriter.png}{%
+    \includegraphics[width=0.92\linewidth]{screenshot2_rewriter.png}%
+}{%
+    \fbox{\begin{minipage}[c][6.0cm][c]{0.92\linewidth}
+    \centering
+    \textbf{\large [Figure 3: Multi-Turn Query Rewriting \& Disambiguation]}\\[0.3cm]
+    \small (Upload screenshot to Overleaf as \texttt{screenshot2\_rewriter.png} to render image automatically)\\[0.2cm]
+    \footnotesize \textit{Demonstrates entity pronoun replacement and conversational state persistence across chat turns.}
+    \end{minipage}}%
+}
+\caption{Contextual Query Rewriting resolving ambiguous pronouns across multi-turn user dialogues.}
 \label{fig:rewriter_ui}
 \end{figure}
 
 \subsection{Real-Time LangGraph Execution Trace}
-Figure~\ref{fig:trace_ui} showcases the live state inspector (Tab 2), displaying node-by-node execution telemetry, similarity scores, and CRAG grading decisions.
+Figure~\ref{fig:trace_ui} showcases the live state inspector (Tab 2), displaying node-by-node execution telemetry, similarity scores, retrieval latencies, and CRAG grading decisions in real time.
 
-\begin{figure}[htbp]
+\begin{figure}[H]
 \centering
-% Once you upload your screenshot image to Overleaf, uncomment the line below:
-% \includegraphics[width=\linewidth]{screenshot3_trace.png}
-\fbox{\begin{minipage}[c][8.5cm][c]{0.96\linewidth}
-\centering
-\textbf{\large [Figure 3: Real-Time LangGraph State Inspector]}\\[0.3cm]
-\small (Upload your screenshot of Tab 2 to Overleaf as \texttt{screenshot3\_trace.png} and uncomment \texttt{\textbackslash includegraphics})\\[0.2cm]
-\footnotesize \textit{Shows real-time node transitions: Intent Classifier $\rightarrow$ Rewriter $\rightarrow$ Retriever $\rightarrow$ Grader $\rightarrow$ Generator.}
-\end{minipage}}
+\IfFileExists{screenshot3_trace.png}{%
+    \includegraphics[width=0.92\linewidth]{screenshot3_trace.png}%
+}{%
+    \fbox{\begin{minipage}[c][6.0cm][c]{0.92\linewidth}
+    \centering
+    \textbf{\large [Figure 4: Real-Time LangGraph State Inspector]}\\[0.3cm]
+    \small (Upload screenshot to Overleaf as \texttt{screenshot3\_trace.png} to render image automatically)\\[0.2cm]
+    \footnotesize \textit{Demonstrates node transitions: Intent Classifier $\rightarrow$ Rewriter $\rightarrow$ Retriever $\rightarrow$ Grader $\rightarrow$ Generator.}
+    \end{minipage}}%
+}
 \caption{Real-Time LangGraph Execution Inspector tracking node status, retrieval scores, and CRAG verdicts.}
 \label{fig:trace_ui}
 \end{figure}
 
 \subsection{Human Agent Desk (Human-in-the-Loop Escalation)}
-Figure~\ref{fig:human_ui} illustrates the operator desk (Tab 3), where escalated tickets are triaged, inspected for customer sentiment, and resolved in real time.
+Figure~\ref{fig:human_ui} illustrates the operator desk (Tab 3), where escalated tickets are triaged, inspected for customer sentiment flags, and resolved by human agents in real time.
 
-\begin{figure}[htbp]
+\begin{figure}[H]
 \centering
-% Once you upload your screenshot image to Overleaf, uncomment the line below:
-% \includegraphics[width=\linewidth]{screenshot4_human.png}
-\fbox{\begin{minipage}[c][8.5cm][c]{0.96\linewidth}
-\centering
-\textbf{\large [Figure 4: Human-in-the-Loop Support Desk]}\\[0.3cm]
-\small (Upload your screenshot of Tab 3 to Overleaf as \texttt{screenshot4\_human.png} and uncomment \texttt{\textbackslash includegraphics})\\[0.2cm]
-\footnotesize \textit{Shows prioritized open tickets, sentiment detection, ticket metadata, and human response resolution controls.}
-\end{minipage}}
+\IfFileExists{screenshot4_human.png}{%
+    \includegraphics[width=0.92\linewidth]{screenshot4_human.png}%
+}{%
+    \fbox{\begin{minipage}[c][6.0cm][c]{0.92\linewidth}
+    \centering
+    \textbf{\large [Figure 5: Human-in-the-Loop Support Desk]}\\[0.3cm]
+    \small (Upload screenshot to Overleaf as \texttt{screenshot4\_human.png} to render image automatically)\\[0.2cm]
+    \footnotesize \textit{Demonstrates prioritized open tickets, sentiment detection badges, and live resolution controls.}
+    \end{minipage}}%
+}
 \caption{Human Agent Desk displaying open priority tickets, sentiment flags, and live resolution controls.}
 \label{fig:human_ui}
 \end{figure}
 
 \section{Cloud Deployment \& Public Hosting}
-To ensure accessibility for evaluators, the application is pre-configured for deployment:
+To ensure accessibility for evaluators, the application is pre-configured for deployment across standard hosting platforms:
 
 \begin{enumerate}
     \item \textbf{Render.com (Native Python / Web Service):} Fully configured via \texttt{render.yaml} and \texttt{Procfile} in the repository. Connect the GitHub repo, select Python 3, set start command to:
@@ -335,7 +296,7 @@ docker run -p 8501:8501 -e GEMINI_API_KEY="your_key" intelligent-customer-suppor
 \section{Empirical Evaluation \& Results}
 The framework was evaluated across 15 benchmark e-commerce scenarios spanning Policy Inquiries, Hardware Specs, Multi-turn Pronoun Follow-ups, Order Operations, and Adversarial / Out-of-Domain Escalations.
 
-\begin{table}[htbp]
+\begin{table}[H]
 \centering
 \caption{Comparative Benchmark: Naive RAG vs. Proposed LangGraph Agent}
 \begin{tabularx}{0.94\textwidth}{l c c c}
@@ -362,23 +323,12 @@ Mean LLM Generation Latency & 1.12 s & \textbf{1.45 s} & +0.33 s \\
 \end{itemize}
 
 \section{Conclusion}
-This project demonstrates that moving from linear RAG pipelines to stateful, cyclic **LangGraph workflows** resolves the core challenges of automated customer support: eliminating hallucinations, handling multi-turn conversational follow-ups, executing operational tools, and providing robust human-in-the-loop escalation.
+This project demonstrates that moving from linear RAG pipelines to stateful, cyclic \textbf{LangGraph workflows} resolves the core challenges of automated customer support: eliminating hallucinations, handling multi-turn conversational follow-ups, executing operational tools, and providing robust human-in-the-loop escalation.
 
-\begin{thebibliography}{00}
-\bibitem{lewis2020rag} P. Lewis, et al., ``Retrieval-augmented generation for knowledge-intensive NLP tasks,'' \textit{Adv. Neural Inf. Process. Syst. (NeurIPS)}, vol. 33, pp. 9459--9474, 2020.
-\bibitem{yan2024crag} S.-Q. Yan, et al., ``Corrective retrieval augmented generation,'' \textit{arXiv preprint arXiv:2401.15884}, 2024.
-\bibitem{langgraph2024} LangChain Team, ``LangGraph: Building language agents as cyclic graphs,'' \textit{LangChain Documentation}, 2024. \url{https://langchain-ai.github.io/langgraph/}
-\bibitem{vaswani2017attention} A. Vaswani, et al., ``Attention is all you need,'' \textit{Adv. Neural Inf. Process. Syst. (NeurIPS)}, vol. 30, pp. 5998--6008, 2017.
-\bibitem{es2023ragas} S. Es, et al., ``RAGAS: Automated evaluation of retrieval augmented generation,'' \textit{arXiv preprint arXiv:2309.15217}, 2023.
-\bibitem{gemini2024} Google DeepMind, ``Gemini 1.5 \& 2.5: Multimodal capabilities and context caching architecture,'' \textit{Google Technical Report}, 2024.
-\end{thebibliography}
-
-\clearpage
-
-% --- Clean Contributions Section (No Appendix, No Declaration, Compact on One Page) ---
+% --- Clean Contributions Section (Placed ABOVE References, No Declaration, No Roles) ---
 \section{Contributions}
 
-\begin{table}[htbp]
+\begin{table}[H]
 \centering
 \small
 \begin{tabularx}{\textwidth}{|l|p{3.2cm}|p{8.5cm}|c|}
@@ -397,5 +347,14 @@ This project demonstrates that moving from linear RAG pipelines to stateful, cyc
 \hline
 \end{tabularx}
 \end{table}
+
+\begin{thebibliography}{00}
+\bibitem{lewis2020rag} P. Lewis, et al., ``Retrieval-augmented generation for knowledge-intensive NLP tasks,'' \textit{Adv. Neural Inf. Process. Syst. (NeurIPS)}, vol. 33, pp. 9459--9474, 2020.
+\bibitem{yan2024crag} S.-Q. Yan, et al., ``Corrective retrieval augmented generation,'' \textit{arXiv preprint arXiv:2401.15884}, 2024.
+\bibitem{langgraph2024} LangChain Team, ``LangGraph: Building language agents as cyclic graphs,'' \textit{LangChain Documentation}, 2024. \url{https://langchain-ai.github.io/langgraph/}
+\bibitem{vaswani2017attention} A. Vaswani, et al., ``Attention is all you need,'' \textit{Adv. Neural Inf. Process. Syst. (NeurIPS)}, vol. 30, pp. 5998--6008, 2017.
+\bibitem{es2023ragas} S. Es, et al., ``RAGAS: Automated evaluation of retrieval augmented generation,'' \textit{arXiv preprint arXiv:2309.15217}, 2023.
+\bibitem{gemini2024} Google DeepMind, ``Gemini 1.5 \& 2.5: Multimodal capabilities and context caching architecture,'' \textit{Google Technical Report}, 2024.
+\end{thebibliography}
 
 \end{document}
