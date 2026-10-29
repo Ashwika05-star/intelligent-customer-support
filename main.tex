@@ -1,229 +1,308 @@
-\documentclass[conference]{IEEEtran}
-\IEEEoverridecommandlockouts
+\documentclass[11pt,a4paper]{article}
 
-% Essential Packages
-\usepackage{cite}
+% --- Essential Packages ---
+\usepackage[margin=1in]{geometry}
 \usepackage{amsmath,amssymb,amsfonts}
-\usepackage{algorithmic}
 \usepackage{graphicx}
-\usepackage{textcomp}
-\usepackage{xcolor}
 \usepackage{booktabs}
+\usepackage{xcolor}
 \usepackage{listings}
 \usepackage{hyperref}
 \usepackage{url}
+\usepackage{caption}
+\usepackage{subcaption}
 \usepackage{tikz}
-\usetikzlibrary{shapes.geometric, arrows, positioning}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{tabularx}
+\usetikzlibrary{shapes.geometric, arrows.meta, positioning, calc}
 
+% --- Page Header & Footer ---
+\pagestyle{fancy}
+\fancyhf{}
+\rhead{\footnotesize Intelligent Customer Support Agent (LangGraph RAG)}
+\lhead{\footnotesize Technical Report}
+\cfoot{\thepage}
+
+% --- Hyperlink Styling ---
 \hypersetup{
     colorlinks=true,
-    linkcolor=blue,
+    linkcolor=blue!80!black,
     filecolor=magenta,      
-    urlcolor=cyan,
-    citecolor=blue
+    urlcolor=blue!70!black,
+    citecolor=blue!80!black
 }
 
-% Code Listing Configuration
-\definecolor{codegreen}{rgb}{0,0.6,0}
-\definecolor{codegray}{rgb}{0.5,0.5,0.5}
-\definecolor{codepurple}{rgb}{0.58,0,0.82}
-\definecolor{backcolour}{rgb}{0.97,0.97,0.97}
+% --- Section Styling ---
+\titleformat{\section}{\large\bfseries\color{blue!80!black}}{\thesection}{1em}{}
+\titleformat{\subsection}{\normalsize\bfseries\color{black!85}}{\thesubsection}{1em}{}
 
-\lstdefinestyle{pythonstyle}{
-    backgroundcolor=\color{backcolour},   
+% --- Code Listing Styling ---
+\definecolor{codebg}{rgb}{0.96,0.97,0.98}
+\definecolor{codeblue}{rgb}{0.1,0.2,0.7}
+\definecolor{codegreen}{rgb}{0.1,0.5,0.2}
+\definecolor{codegray}{rgb}{0.45,0.45,0.45}
+
+\lstdefinestyle{mystyle}{
+    backgroundcolor=\color{codebg},   
     commentstyle=\color{codegreen},
-    keywordstyle=\color{magenta},
+    keywordstyle=\color{codeblue}\bfseries,
     numberstyle=\tiny\color{codegray},
-    stringstyle=\color{codepurple},
+    stringstyle=\color{orange!80!black},
     basicstyle=\ttfamily\footnotesize,
     breakatwhitespace=false,         
     breaklines=true,                 
     captionpos=b,                    
     keepspaces=true,                 
     numbers=left,                    
-    numbersep=5pt,                  
+    numbersep=7pt,                  
     showspaces=false,                
     showstringspaces=false,
     showtabs=false,                  
-    tabsize=2
+    tabsize=2,
+    frame=single,
+    rulecolor=\color{black!15}
 }
-\lstset{style=pythonstyle}
+\lstset{style=mystyle}
+
+% --- Document Information ---
+\title{\vspace{-1.5cm}\textbf{\Large Technical Report: Intelligent Customer Support Agent}\\[0.3cm]
+\large Orchestrating Dual-Partitioned Retrieval, Corrective RAG (CRAG), and Human-in-the-Loop Workflows via LangGraph}
+
+\author{
+\textbf{Team Members (Group of 5):}\\[0.2cm]
+\begin{tabular}{ccc}
+\textbf{Student 1 (Lead Architect)} & \textbf{Student 2 (RAG Engineer)} & \textbf{Student 3 (Knowledge Engineer)} \\
+Roll No: [Your ID 1] & Roll No: [Your ID 2] & Roll No: [Your ID 3] \\
+Email: student1@university.edu & Email: student2@university.edu & Email: student3@university.edu \\[0.3cm]
+\multicolumn{2}{c}{\textbf{Student 4 (Tools \& Database)}} & \textbf{Student 5 (UI \& Deployment)} \\
+\multicolumn{2}{c}{Roll No: [Your ID 4]} & Roll No: [Your ID 5] \\
+\multicolumn{2}{c}{Email: student4@university.edu} & Email: student5@university.edu
+\end{tabular}\\[0.3cm]
+\textit{Department of Computer Science \& Engineering}\\
+\textit{Institution / University Name}
+}
+\date{October 2026}
 
 \begin{document}
 
-\title{Intelligent Customer Support Agent: Orchestrating Dual-Partitioned Retrieval, Corrective RAG, and Human-in-the-Loop Workflows via LangGraph\\
-\thanks{Source code repository and interactive demonstration: \url{https://github.com/intelligent-customer-support}}
-}
-
-\author{\IEEEauthorblockN{Student Name 1}
-\IEEEauthorblockA{\textit{Department of Computer Science} \\
-\textit{Institution / University Name}\\
-City, Country \\
-student1@university.edu}
-\and
-\IEEEauthorblockN{Student Name 2}
-\IEEEauthorblockA{\textit{Department of Computer Science} \\
-\textit{Institution / University Name}\\
-City, Country \\
-student2@university.edu}
-}
-
 \maketitle
 
+% --- GitHub Repository Banner Box ---
+\begin{center}
+\fcolorbox{blue!60}{blue!5}{
+\begin{minipage}{0.94\textwidth}
+\centering
+\textbf{🔗 Project Repository \& Demonstration Artifacts:}\\
+\href{https://github.com/your-username/intelligent-customer-support}{\texttt{https://github.com/your-username/intelligent-customer-support}} \\
+\footnotesize \textit{(Contains complete source code, Streamlit application, evaluation scripts, and dataset files)}
+\end{minipage}
+}
+\end{center}
+
+\vspace{0.3cm}
+
 \begin{abstract}
-E-commerce enterprises process high volumes of repetitive inquiries regarding return windows, warranty terms, shipping delays, and hardware troubleshooting. Traditional support systems suffer from severe trade-offs: rule-based bots lack linguistic flexibility, vanilla Large Language Models (LLMs) hallucinate policies, and naive Retrieval-Augmented Generation (RAG) architectures fail on multi-turn pronoun follow-ups and lack self-correction mechanisms. This paper presents the architecture, implementation, and empirical validation of an enterprise-grade \textbf{Intelligent Customer Support Agent} built upon a cyclic \textbf{LangGraph state machine}. The system introduces three key innovations: (1) \textit{Dual-Source Partitioned Retrieval} to prevent cross-domain vector contamination between company policies and hardware specifications; (2) a \textit{Contextual Query Rewriter} for conversational coreference resolution; and (3) a \textit{Corrective RAG (CRAG)} validation gate coupled with automated \textit{Human-in-the-Loop (HITL)} escalation. Evaluated across 15 canonical e-commerce benchmark scenarios, the proposed architecture eliminates factual hallucinations (0.0\%), resolves multi-turn ambiguous queries with 100\% accuracy, and achieves a 93.3\% autonomous case resolution rate.
+E-commerce enterprises process high volumes of repetitive inquiries regarding return windows, warranty coverage, shipping delays, and hardware troubleshooting. Traditional support systems suffer from severe trade-offs: rule-based bots lack linguistic flexibility, vanilla Large Language Models (LLMs) hallucinate policies, and naive Retrieval-Augmented Generation (RAG) pipelines fail on multi-turn pronoun follow-ups and lack self-correction mechanisms. This paper presents the architecture, implementation, and empirical validation of an enterprise-grade \textbf{Intelligent Customer Support Agent} built upon a cyclic \textbf{LangGraph state machine}. The system introduces three key innovations: (1) \textit{Dual-Source Partitioned Retrieval} to prevent cross-domain vector contamination between company policies and hardware specifications; (2) a \textit{Contextual Query Rewriter} for conversational coreference resolution; and (3) a \textit{Corrective RAG (CRAG)} validation gate coupled with automated \textit{Human-in-the-Loop (HITL)} escalation. Evaluated across 15 canonical e-commerce benchmark scenarios, the proposed architecture eliminates factual hallucinations (0.0\%), resolves multi-turn ambiguous queries with 100\% accuracy, and achieves a 93.3\% autonomous case resolution rate.
 \end{abstract}
 
-\begin{IEEEkeywords}
-Retrieval-Augmented Generation (RAG), LangGraph, Corrective RAG (CRAG), Human-in-the-Loop (HITL), Multi-Turn Coreference Resolution, E-Commerce AI.
-\end{IEEEkeywords}
+\vspace{0.4cm}
 
-\section{Introduction}
-Modern e-commerce enterprises operate under high customer interaction volumes, with over 70\% of inquiries focusing on order logistics, returns, warranties, and technical troubleshooting. In traditional support centers, human representatives repeatedly query static PDF manuals and intranet wikis, leading to prolonged response latencies, customer churn, and elevated operational costs (\$6--\$12 per handled ticket) \cite{lewis2020rag}.
+\section{Introduction \& Problem Statement}
+Modern e-commerce enterprises operate under high customer interaction volumes, with over 70\% of inquiries focusing on routine topics: order logistics, returns, warranties, and technical troubleshooting. In traditional support centers, human representatives repeatedly query static PDF manuals and intranet wikis, leading to prolonged response latencies, customer churn, and elevated operational costs (\$6--\$12 per handled ticket).
 
 Automated conversational assistants have historically exhibited severe limitations:
 \begin{enumerate}
     \item \textbf{Rule-Based Systems:} Brittle regex patterns unable to synthesize unstructured policy clauses.
     \item \textbf{Zero-Shot LLMs:} Severe parametric hallucinations, often confabulating non-existent return privileges.
-    \item \textbf{Naive RAG Pipelines:} Linear Directed Acyclic Graph (DAG) chains that perform single-shot semantic vector search. These pipelines fail when customers use conversational pronouns (\textit{``Does it have Bluetooth?''}) and cannot verify if retrieved context actually supports the query before synthesizing an answer \cite{yan2024crag}.
+    \item \textbf{Naive RAG Pipelines:} Linear Directed Acyclic Graph (DAG) chains that perform single-shot semantic vector search. These pipelines fail when customers use conversational pronouns (\textit{``Does it have Bluetooth?''}) and cannot verify if retrieved context actually supports the query before synthesizing an answer.
 \end{enumerate}
 
-To overcome these structural defects, we formulate customer support as a cyclic state machine utilizing \textbf{LangGraph} \cite{langgraph2024}. The system orchestrates intent classification, contextual coreference rewriting, partitioned document retrieval, factual relevance grading, action tool execution, and deterministic human escalation.
+To overcome these structural defects, we formulate customer support as a cyclic state machine utilizing \textbf{LangGraph}. The system orchestrates intent classification, contextual coreference rewriting, partitioned document retrieval, factual relevance grading, action tool execution, and deterministic human escalation.
 
-\section{Theoretical Background \& Related Work}
+\section{Methodology \& Proposed Architecture}
 
-\subsection{Retrieval-Augmented Generation (RAG)}
-Standard RAG models formulate the conditional generation probability $P(y \mid q)$ over an input query $q$ and external knowledge index $\mathcal{K}$ through retrieved passages $\mathcal{D} = \{d_1, \dots, d_k\}$:
-\begin{equation}
-P(y \mid q) \approx \sum_{d \in \mathcal{D}} P(y \mid q, d) P(d \mid q)
-\end{equation}
-While effective for standalone factual extraction, standard RAG lacks state persistence across conversational turns $t$, causing degradation when $q_t$ references entities in dialogue history $\mathcal{H}_{t-1}$.
+\subsection{Formal State Machine Model}
+LangGraph formalizes execution as a directed cyclic state machine $\mathcal{M} = \langle \mathcal{S}, \mathcal{V}, \mathcal{E}, \delta \rangle$, where $\mathcal{S}$ is an append-only state object preserved across graph ticks:
 
-\subsection{Corrective RAG (CRAG)}
-As established by Yan et al. \cite{yan2024crag}, naive RAG blindly trusts the top-$k$ vector outputs. CRAG introduces a semantic evaluation filter $\mathcal{G}_{\text{eval}}(\mathcal{D}, q) \rightarrow \{\text{Correct}, \text{Ambiguous}, \text{Incorrect}\}$. If the retrieved context confidence falls below a pre-set threshold $\tau$, the pipeline initiates automated query reformulation or routes the request to an external fallback.
-
-\subsection{Cyclic State Machines via LangGraph}
-Standard pipeline frameworks enforce acyclic execution, preventing retry loops and stateful pause/resume operations. LangGraph formalizes agentic execution as a stateful graph:
-\begin{equation}
-\mathcal{M} = \langle \mathcal{S}, \mathcal{V}, \mathcal{E}, \delta \rangle
-\end{equation}
-where $\mathcal{S}$ represents a shared typed state dictionary, $\mathcal{V}$ denotes computational nodes, $\mathcal{E}$ represents directed edges, and $\delta: \mathcal{S} \times \mathcal{V} \rightarrow \mathcal{V}$ defines conditional routing functions.
-
-\section{System Architecture \& Methodology}
-
-\begin{figure*}[t]
-\centering
-\begin{tikzpicture}[node distance=1.5cm, auto, >=latex]
-    % Nodes
-    \node (start) [rectangle, rounded corners, draw=black, fill=blue!10, text width=2.2cm, align=center] {Customer Input $q_t$};
-    \node (classifier) [rectangle, draw=black, fill=yellow!15, right=1.0cm of start, text width=2.4cm, align=center] {Intent \& Sentiment Classifier};
-    \node (chitchat) [rectangle, draw=black, fill=gray!15, above right=0.8cm and 0.8cm of classifier, text width=2.0cm, align=center] {Conversational Chitchat};
-    \node (rewriter) [rectangle, draw=black, fill=orange!15, right=1.2cm of classifier, text width=2.2cm, align=center] {Contextual Query Rewriter};
-    \node (order) [rectangle, draw=black, fill=cyan!15, below right=0.8cm and 0.8cm of classifier, text width=2.2cm, align=center] {Order DB Action Tool};
-    \node (ret_policy) [rectangle, draw=black, fill=green!15, above right=0.5cm and 1.2cm of rewriter, text width=2.2cm, align=center] {Policy Retriever ($\mathcal{K}_{\text{policy}}$)};
-    \node (ret_manual) [rectangle, draw=black, fill=green!15, below right=0.5cm and 1.2cm of rewriter, text width=2.2cm, align=center] {Manual Retriever ($\mathcal{K}_{\text{manual}}$)};
-    \node (grader) [diamond, draw=black, fill=red!15, right=1.2cm of ret_policy, text width=1.8cm, align=center] {CRAG Grader};
-    \node (generator) [rectangle, draw=black, fill=purple!15, right=1.5cm of grader, text width=2.2cm, align=center] {Grounded Generator};
-    \node (escalator) [rectangle, draw=black, fill=red!30, below=1.8cm of grader, text width=2.2cm, align=center] {Human Escalation (HITL)};
-    \node (end) [rectangle, rounded corners, draw=black, fill=blue!10, right=1.0cm of generator, text width=1.5cm, align=center] {Response};
-
-    % Transitions
-    \draw[->, thick] (start) -- (classifier);
-    \draw[->, thick] (classifier) -- node [above] {chitchat} (chitchat);
-    \draw[->, thick] (classifier) -- node [above] {support} (rewriter);
-    \draw[->, thick] (classifier) -- node [below] {order/return} (order);
-    \draw[->, thick] (classifier) |- node [near start, left] {frustrated/human} (escalator);
-    \draw[->, thick] (rewriter) -- node [above] {policy} (ret_policy);
-    \draw[->, thick] (rewriter) -- node [below] {manual} (ret_manual);
-    \draw[->, thick] (ret_policy) -- (grader);
-    \draw[->, thick] (ret_manual) -| (grader);
-    \draw[->, thick] (order) -| (grader);
-    \draw[->, thick] (grader) -- node [above] {Pass ($\ge 0.30$)} (generator);
-    \draw[->, thick] (grader) -- node [left] {Fail / Exhausted} (escalator);
-    \draw[->, thick] (generator) -- (end);
-    \draw[->, thick] (chitchat) -| (end);
-    \draw[->, thick] (escalator) -| (end);
-    \draw[->, dashed, red] (grader) |- node [near start, above] {Retry ($< 1$)} (rewriter);
-\end{tikzpicture}
-\caption{Complete LangGraph architectural workflow showing conditional edges, cyclical self-corrective retry loops, partitioned retrieval namespaces, and human-in-the-loop escalation paths.}
-\label{fig:architecture}
-\end{figure*}
-
-\subsection{State Schema Formulation}
-Execution state is maintained via a structured TypedDict object, $\mathcal{S}$, preserved across cycles:
 \begin{lstlisting}[language=Python]
 class SupportAgentState(TypedDict):
-    messages: List[Dict[str, str]]
-    raw_query: str
-    rewritten_query: str
-    category: str
-    sentiment: str  # positive, neutral, frustrated
-    order_id: Optional[str]
-    retrieved_docs: List[RetrievedDoc]
-    grader_result: Optional[Dict]
-    confidence_score: float
-    retry_count: int
-    response: str
-    citations: List[str]
-    is_escalated: bool
-    escalation_reason: Optional[str]
-    ticket_id: Optional[str]
-    execution_steps: List[ExecutionStep]
+    messages: List[Dict[str, str]]       # Conversation trajectory
+    raw_query: str                       # User input query
+    rewritten_query: str                 # Disambiguated query
+    category: str                        # Intent category
+    sentiment: str                       # positive | neutral | frustrated
+    order_id: Optional[str]              # Extracted order entity
+    retrieved_docs: List[RetrievedDoc]   # Knowledge passages with scores
+    grader_result: Optional[Dict]        # CRAG verification output
+    confidence_score: float              # Relevance score [0.0 - 1.0]
+    retry_count: int                     # Loop safety counter
+    response: str                        # Grounded response text
+    citations: List[str]                 # Document section citations
+    is_escalated: bool                   # Human intervention flag
+    ticket_id: Optional[str]             # Support ticket ID
+    execution_steps: List[ExecutionStep] # State trace telemetry
 \end{lstlisting}
 
-\subsection{Graph Nodes Specification}
+\subsection{System Workflow Flowchart}
+Figure~\ref{fig:flowchart} outlines the complete decision-making topology of the agent, showing conditional branching, dual retrieval paths, and the self-corrective retry loop.
 
-\subsubsection{Node 1: Intent \& Sentiment Classifier}
-Extracts category $c \in \{\text{policy}, \text{product}, \text{order}, \text{return}, \text{chitchat}, \text{escalation}\}$, analyzes customer sentiment $s \in \{\text{positive}, \text{neutral}, \text{frustrated}\}$, and regex-extracts order identifiers matching $\text{ORD}-\backslash\text{d}\{4,6\}$.
+\begin{figure}[htbp]
+\centering
+\resizebox{0.95\linewidth}{!}{
+\begin{tikzpicture}[
+    node distance=1.4cm and 1.2cm,
+    >=Stealth,
+    base/.style = {rectangle, rounded corners=4pt, draw=black!75, thick, text width=3.2cm, align=center, minimum height=1.1cm, font=\small},
+    startstop/.style = {base, fill=blue!15},
+    process/.style = {base, fill=orange!15},
+    router/.style = {diamond, aspect=1.8, draw=black!75, thick, fill=yellow!25, align=center, font=\small},
+    eval/.style = {diamond, aspect=1.8, draw=black!75, thick, fill=red!15, align=center, font=\small},
+    action/.style = {base, fill=teal!15},
+    escalate/.style = {base, fill=red!25, text width=3.2cm}
+]
+    % Nodes
+    \node (start) [startstop] {\textbf{Customer Query} ($q_t$)};
+    \node (classifier) [process, below=1.0cm of start] {\textbf{1. Classifier Node}\\Intent \& Sentiment};
+    
+    \node (chitchat) [base, fill=gray!20, right=2.0cm of classifier] {\textbf{Chitchat Node}\\Greetings / Thanks};
+    \node (escalator) [escalate, left=2.0cm of classifier] {\textbf{Human Escalation}\\Priority Ticket HITL};
+    
+    \node (rewriter) [process, below=1.2cm of classifier] {\textbf{2. Query Rewriter}\\Coreference Resolution};
+    \node (order) [action, right=2.0cm of rewriter] {\textbf{Order DB Tool}\\Status / Return Calc};
+    
+    \node (domain) [router, below=1.0cm of rewriter] {\textbf{Domain?}};
+    \node (ret_policy) [base, fill=green!15, below left=0.8cm and 0.4cm of domain] {\textbf{3A. Policy Retriever}\\Returns, Shipping, SLA};
+    \node (ret_manual) [base, fill=green!15, below right=0.8cm and 0.4cm of domain] {\textbf{3B. Manual Retriever}\\Hardware Specs, Codes};
+    
+    \node (grader) [eval, below=2.6cm of domain] {\textbf{4. CRAG Grader}\\$\text{Score} \ge 0.30$?};
+    \node (generator) [base, fill=purple!15, below=1.2cm of grader] {\textbf{5. Grounded Generator}\\Answer with Citations};
+    \node (end) [startstop, below=1.0cm of generator] {\textbf{Deliver Response}};
 
-\subsubsection{Node 2: Contextual Query Rewriter}
-In multi-turn dialogues, customer inquiries frequently exhibit elliptical reference and anaphora. The rewriter maps $(q_t, \mathcal{H}_{t-1}) \rightarrow q_{\text{standalone}}$, replacing pronouns with grounded antecedents derived from prior conversational history.
+    % Arrows
+    \draw[->, thick] (start) -- (classifier);
+    \draw[->, thick] (classifier) -- node [above] {chitchat} (chitchat);
+    \draw[->, thick] (classifier) -- node [above] {anger/human} (escalator);
+    \draw[->, thick] (classifier) -- node [right] {support} (rewriter);
+    \draw[->, thick] (classifier) -- node [above] {order/return} (order);
+    
+    \draw[->, thick] (rewriter) -- (domain);
+    \draw[->, thick] (domain) -| node [above, pos=0.3] {policy} (ret_policy);
+    \draw[->, thick] (domain) -| node [above, pos=0.3] {manual} (ret_manual);
+    
+    \draw[->, thick] (ret_policy) |- (grader);
+    \draw[->, thick] (ret_manual) |- (grader);
+    \draw[->, thick] (order) |- (grader);
+    
+    \draw[->, thick] (grader) -- node [right] {\textbf{Pass} ($\ge 0.30$)} (generator);
+    \draw[->, thick] (grader) -| node [near start, above] {\textbf{Fail} ($\text{retry} \ge 1$)} (escalator);
+    \draw[->, dashed, thick, red] (grader.east) -- ++(1.5,0) |- node [pos=0.25, right] {Retry ($< 1$)} (rewriter.east);
+    
+    \draw[->, thick] (generator) -- (end);
+    \draw[->, thick] (chitchat) |- (end);
+    \draw[->, thick] (escalator) |- (end);
+\end{tikzpicture}
+}
+\caption{Complete LangGraph State Machine Architecture: Illustrating classification, partitioned retrieval namespaces, the Corrective RAG retry loop, and automated Human-in-the-Loop escalation.}
+\label{fig:flowchart}
+\end{figure}
 
-\subsubsection{Nodes 3A \& 3B: Dual-Partitioned Retrieval}
-Unstructured documents are categorized into separate namespaces:
+\subsection{Node-by-Node Functional Breakdown}
+\begin{enumerate}
+    \item \textbf{Intent \& Sentiment Classifier (\texttt{classifier.py}):} Analyzes the query and previous dialogue to determine the intent category, sentiment (\textit{positive}, \textit{neutral}, \textit{frustrated}), and extracts order IDs matching \texttt{ORD-XXXXX}.
+    \item \textbf{Contextual Query Rewriter (\texttt{rewriter.py}):} Solves conversational pronoun ambiguity by examining past assistant messages and reformulating queries into self-contained search targets.
+    \item \textbf{Dual-Partitioned Retrievers (\texttt{retrieval_nodes.py}):} Unstructured Markdown documents are partitioned into separate namespaces (\textit{Policies} vs. \textit{Product Manuals}) to avoid cross-domain vector contamination.
+    \item \textbf{Corrective RAG Grader (\texttt{grader.py}):} Compares retrieved chunks against the standalone query. Chunks scoring below $\tau = 0.30$ trigger a query-reformulation retry before safely escalating to human support.
+    \item \textbf{Grounded Generator (\texttt{generator.py}):} Synthesizes concise responses strictly grounded in verified context and appends verifiable section citations.
+    \item \textbf{Human Support Escalation (\texttt{escalation.py}):} Creates priority tickets (\texttt{TICK-XXXXXX}), logs sentiment and query context to \texttt{escalated_tickets.json}, and alerts the human operator.
+\end{enumerate}
+
+\section{Operational Action Tools \& Database Integration}
+The agent connects to an operational mock database (\texttt{orders.json}) to perform live transactional tasks:
 \begin{itemize}
-    \item \textbf{Policy Namespace ($\mathcal{K}_{\text{policy}}$):} Stores returns, refund schedules, shipping rate cards, and warranty guidelines.
-    \item \textbf{Manual Namespace ($\mathcal{K}_{\text{manual}}$):} Stores engineering specifications, battery curves, error codes, and schematics.
+    \item \textbf{\texttt{lookup\_order(order\_id)}:} Queries parcel transit stage, courier, and delivery dates.
+    \item \textbf{\texttt{check\_return\_eligibility(order\_id)}:} Computes days elapsed since delivery against the statutory 30-day return policy and informs the user of eligibility or active warranty alternatives.
 \end{itemize}
-Partitioning eliminates semantic interference, ensuring hardware questions never retrieve return policies.
 
-\subsubsection{Node 4: Corrective RAG (CRAG) Document Grader}
-Evaluates the semantic relevance score $R(\mathcal{D}, q_{\text{standalone}})$. If $R < \tau$ (configured at $\tau = 0.30$), execution conditionally branches into a single query-reformulation cycle ($\text{retry} < 1$). If the secondary retrieval also fails, execution safely escalates to human triage.
-
-\subsubsection{Node 5: Grounded Answer Generator}
-Generates natural language responses strictly constrained to passing chunks $\mathcal{D}$. The model enforces strict non-extrapolative generation and appends citations in the standard format: \texttt{[Document Title - Section Name]}.
-
-\subsubsection{Node 6: Human-in-the-Loop Escalation}
-Generates a priority ticket ($\text{TICK}-\text{UUID}$), registers the customer's sentiment, serializes the context into an operational JSON queue, and notifies the human operator console.
-
-\section{Operational Action Tools \& Integration}
-Beyond static knowledge extraction, the agent interfaces with live operational systems via mock database integrations (\texttt{orders.json}):
+\section{Implementation \& Technology Stack}
+The system was engineered using Python 3.14 with an emphasis on production modularity:
 \begin{itemize}
-    \item \textbf{\texttt{lookup\_order(order\_id)}:} Queries real-time parcel carrier data, current transit stage, and tracking numbers.
-    \item \textbf{\texttt{check\_return\_eligibility(order\_id)}:} Evaluates confirmed delivery dates against the strict 30-day statutory return policy. Calculates exact days elapsed and informs the customer of eligibility or warranty alternatives.
+    \item \textbf{State Graph Engine:} \texttt{langgraph} (v1.2.18) with state checkpointing.
+    \item \textbf{LLM Engine:} Google Gemini (\texttt{gemini-2.5-flash} and \texttt{gemini-1.5-flash}) via the official \texttt{google-genai} SDK (v2.33.0).
+    \item \textbf{Hybrid Semantic Retrieval:} Section-aware Markdown chunking combined with sublinear TF-IDF vectorization (\texttt{scikit-learn} v1.9.1, \texttt{numpy} v2.5.4) and keyword title boosting.
+    \item \textbf{Web Application Framework:} \texttt{streamlit} (v1.66.1) featuring three dedicated functional views.
 \end{itemize}
 
-\section{Implementation Details}
-The system was engineered with production modularity:
-\begin{itemize}
-    \item \textbf{Orchestrator:} \texttt{langgraph} (v1.2.18) with in-memory checkpointer persistence.
-    \item \textbf{Language Model:} Google Gemini (\texttt{gemini-2.5-flash} and \texttt{gemini-1.5-flash}) via the official \texttt{google-genai} SDK (v2.33.0).
-    \item \textbf{Hybrid Vector Retrieval:} Section-aware Markdown chunking combined with sublinear TF-IDF vectorization (\texttt{scikit-learn} v1.9.1, \texttt{numpy} v2.5.4) and exact-match keyword title boosting.
-    \item \textbf{User Interface:} \texttt{streamlit} (v1.66.1) with three decoupled panels: Customer Chat, Real-Time LangGraph Execution Trace, and Human Support Agent Desk.
-\end{itemize}
+\section{System User Interface \& Web Demonstration}
+The web application is implemented in \texttt{app.py} and serves three core interfaces:
+
+\subsection{Customer Support Chat with Grounded Citations}
+Figure~\ref{fig:chat_ui} illustrates the customer chat view. The assistant generates factual answers strictly grounded in official documents and appends clickable/expandable citations.
+
+\begin{figure}[htbp]
+\centering
+% UNCOMMENT BELOW ONCE YOU UPLOAD screenshot1_chat.png TO OVERLEAF:
+% \includegraphics[width=0.88\linewidth]{screenshot1_chat.png}
+\fbox{\begin{minipage}[c][3.8cm][c]{0.88\linewidth}\centering \textbf{[Figure 1: Customer Support Chat with Citations]}\\\small (Upload your screenshot to Overleaf as \texttt{screenshot1\_chat.png} and uncomment \texttt{\textbackslash includegraphics})\end{minipage}}
+\caption{Customer Chat Interface showing grounded policy response and expandable citations badge.}
+\label{fig:chat_ui}
+\end{figure}
+
+\subsection{Multi-Turn Contextual Query Rewriting}
+Figure~\ref{fig:rewriter_ui} demonstrates coreference resolution across conversational turns. When a user asks \textit{``Does it support multipoint Bluetooth pairing?''}, the rewriter automatically injects \textit{``AuraSound Pro AS-900''}.
+
+\begin{figure}[htbp]
+\centering
+% UNCOMMENT BELOW ONCE YOU UPLOAD screenshot2_rewriter.png TO OVERLEAF:
+% \includegraphics[width=0.88\linewidth]{screenshot2_rewriter.png}
+\fbox{\begin{minipage}[c][3.8cm][c]{0.88\linewidth}\centering \textbf{[Figure 2: Multi-Turn Query Rewriting \& Disambiguation]}\\\small (Upload your screenshot to Overleaf as \texttt{screenshot2\_rewriter.png} and uncomment \texttt{\textbackslash includegraphics})\end{minipage}}
+\caption{Contextual Query Rewriting resolving ambiguous pronouns across turns.}
+\label{fig:rewriter_ui}
+\end{figure}
+
+\subsection{Real-Time LangGraph Execution Trace}
+Figure~\ref{fig:trace_ui} showcases the live state inspector (Tab 2), displaying node-by-node execution telemetry, similarity scores, and CRAG grading decisions.
+
+\begin{figure}[htbp]
+\centering
+% UNCOMMENT BELOW ONCE YOU UPLOAD screenshot3_trace.png TO OVERLEAF:
+% \includegraphics[width=0.88\linewidth]{screenshot3_trace.png}
+\fbox{\begin{minipage}[c][3.8cm][c]{0.88\linewidth}\centering \textbf{[Figure 3: Real-Time LangGraph State Inspector]}\\\small (Upload your screenshot to Overleaf as \texttt{screenshot3\_trace.png} and uncomment \texttt{\textbackslash includegraphics})\end{minipage}}
+\caption{Real-Time LangGraph Execution Inspector tracking node status, retrieval scores, and CRAG verdicts.}
+\label{fig:trace_ui}
+\end{figure}
+
+\subsection{Human Agent Desk (Human-in-the-Loop Escalation)}
+Figure~\ref{fig:human_ui} illustrates the operator desk (Tab 3), where escalated tickets are triaged, inspected for customer sentiment, and resolved in real time.
+
+\begin{figure}[htbp]
+\centering
+% UNCOMMENT BELOW ONCE YOU UPLOAD screenshot4_human.png TO OVERLEAF:
+% \includegraphics[width=0.88\linewidth]{screenshot4_human.png}
+\fbox{\begin{minipage}[c][3.8cm][c]{0.88\linewidth}\centering \textbf{[Figure 4: Human-in-the-Loop Support Desk]}\\\small (Upload your screenshot to Overleaf as \texttt{screenshot4\_human.png} and uncomment \texttt{\textbackslash includegraphics})\end{minipage}}
+\caption{Human Agent Desk displaying open priority tickets, sentiment flags, and live resolution controls.}
+\label{fig:human_ui}
+\end{figure}
+
+\section{Cloud Deployment \& Public Hosting}
+To ensure accessibility for academic evaluators, the application is pre-configured for multi-platform cloud deployment:
+
+\begin{enumerate}
+    \item \textbf{Streamlit Community Cloud (Free 1-Click Hosting):} Directly linked to the GitHub repository. Connect the repository, set the main file to \texttt{app.py}, configure \texttt{GEMINI\_API_KEY} in Secrets, and deploy to a public URL (e.g., \url{https://novamart-support.streamlit.app}).
+    \item \textbf{Containerized Docker Deployment:} A multi-stage production \texttt{Dockerfile} is provided in the repository for deployment to Render, AWS ECS, or Google Cloud Run:
+\begin{lstlisting}[language=bash]
+docker build -t intelligent-customer-support .
+docker run -p 8501:8501 -e GEMINI_API_KEY="your_key" intelligent-customer-support
+\end{lstlisting}
+\end{enumerate}
 
 \section{Empirical Evaluation \& Results}
-
-\subsection{Evaluation Methodology}
-The framework was evaluated against a benchmark suite of 15 canonical e-commerce test scenarios spanning five distinct distributions: Direct Policy Inquiries (DPI), Technical Hardware Specifications (THS), Multi-Turn Coreference Follow-Ups (MTF), Transactional Order Operations (TOO), and Adversarial / Out-of-Domain Escalations (AEC).
-
-\subsection{Quantitative Comparison}
-We benchmarked the proposed \textbf{LangGraph CRAG Agent} against a standard baseline \textbf{Naive RAG Pipeline} (single-vector store, no rewriter, no document grader, no escalation loop). Results are summarized in Table~\ref{tab:evaluation}.
+The framework was evaluated across 15 benchmark e-commerce scenarios spanning Policy Inquiries, Hardware Specs, Multi-turn Pronoun Follow-ups, Order Operations, and Adversarial / Out-of-Domain Escalations.
 
 \begin{table}[htbp]
+\centering
 \caption{Comparative Benchmark: Naive RAG vs. Proposed LangGraph Agent}
-\begin{center}
-\begin{tabular}{lccc}
+\begin{tabularx}{0.94\textwidth}{l c c c}
 \toprule
 \textbf{Evaluation Metric} & \textbf{Naive RAG} & \textbf{LangGraph CRAG} & \textbf{Delta} \\
 \midrule
@@ -235,76 +314,63 @@ Citation Attribution Precision & 46.2\% & \textbf{98.4\%} & \textbf{+52.2\%} \\
 Mean Local Latency & 0.01 s & \textbf{0.02 s} & Negligible \\
 Mean LLM Generation Latency & 1.12 s & \textbf{1.45 s} & +0.33 s \\
 \bottomrule
-\end{tabular}
+\end{tabularx}
 \label{tab:evaluation}
-\end{center}
 \end{table}
 
-\subsection{Key Qualitative Insights}
+\section{Limitations \& Future Work}
 \begin{itemize}
-    \item \textbf{Elimination of Hallucinations:} Under out-of-domain queries (\textit{``Can you ship a submarine engine to Antarctica?''}), the Naive RAG pipeline hallucinated arbitrary shipping rates. In contrast, the CRAG grader scored document relevance at $0.15 < 0.30$, immediately triggering clean human escalation (\texttt{TICK-414A34}).
-    \item \textbf{Contextual Pronoun Rewriting:} When evaluating Turn 2 follow-ups (\textit{``Does it support multipoint Bluetooth?''}), the Naive RAG pipeline retrieved generic Bluetooth snippets. The contextual rewriter expanded the query to include \textit{``AuraSound Pro AS-900''}, achieving 100\% precision on specification retrieval.
+    \item \textbf{Compound Multi-Intent Inquiries:} Queries containing disjoint questions across products and policies are currently handled by selecting the dominant category rather than parallel multi-branch execution.
+    \item \textbf{Database Concurrency:} The operational tool uses file-based JSON locks, which must be upgraded to PostgreSQL/Redis for enterprise scale ($>500$ RPS).
+    \item \textbf{Future Work:} We plan to incorporate sub-graph query decomposition and continuous production evaluation via automated RAGAS metric pipelines.
 \end{itemize}
 
-\section{Limitations \& Failure Modes}
-\begin{enumerate}
-    \item \textbf{Compound Multi-Intent Inquiries:} If a user submits multiple questions across disjoint domains in a single sentence (\textit{``Where is ORD-98214 and how long is the chair warranty?''}), the current single-pass classifier picks the dominant category rather than branching in parallel.
-    \item \textbf{Lexical Sensitivity in Offline Mode:} While keyword boosting resolves model codes (\textit{AS-900}, \textit{EC-MAX}), colloquial slang with zero lexical overlap can trigger premature escalation in offline mode.
-    \item \textbf{File-Based Storage Concurrency:} Current ticket serialization uses file-based JSON. Enterprise production mandates migration to ACID-compliant PostgreSQL or Redis backends.
-\end{enumerate}
-
-\section{Future Work}
-Future iterations will explore: (1) dynamic query decomposition using LangGraph sub-graphs for parallel multi-intent execution; (2) distributed session checkpointers via \texttt{PostgresSaver}; and (3) continuous production evaluation using automated RAGAS metric pipelines.
-
 \section{Conclusion}
-This paper presented an enterprise-grade customer support agent combining LangGraph orchestration, dual-source partitioned RAG, contextual query rewriting, and Corrective RAG grading. Experimental validation confirms that this architecture eliminates hallucinations, resolves complex multi-turn dialogues, and provides deterministic human-in-the-loop safety.
+This project demonstrates that moving from linear RAG pipelines to stateful, cyclic **LangGraph workflows** resolves the core challenges of automated customer support: eliminating hallucinations, handling multi-turn conversational follow-ups, executing operational tools, and providing robust human-in-the-loop escalation.
 
 \begin{thebibliography}{00}
-\bibitem{lewis2020rag} P. Lewis, E. Perez, A. Piktus, F. Petroni, V. Karpukhin, N. Goyal, H. K{\"u}ttler, M. Lewis, W. Yih, T. Rockt{\"a}schel, et al., ``Retrieval-augmented generation for knowledge-intensive NLP tasks,'' \textit{Adv. Neural Inf. Process. Syst. (NeurIPS)}, vol. 33, pp. 9459--9474, 2020.
-\bibitem{yan2024crag} S.-Q. Yan, J.-C. Gu, Y. Zhu, and Z.-H. Ling, ``Corrective retrieval augmented generation,'' \textit{arXiv preprint arXiv:2401.15884}, 2024.
-\bibitem{langgraph2024} LangChain Team, ``LangGraph: Building language agents as cyclic graphs,'' \textit{LangChain Documentation and Specifications}, 2024. [Online]. Available: https://langchain-ai.github.io/langgraph/
-\bibitem{vaswani2017attention} A. Vaswani, N. Shazeer, N. Parmar, J. Uszkoreit, L. Jones, A. N. Gomez, {\L}. Kaiser, and I. Polosukhin, ``Attention is all you need,'' \textit{Adv. Neural Inf. Process. Syst. (NeurIPS)}, vol. 30, pp. 5998--6008, 2017.
-\bibitem{es2023ragas} S. Es, J. James, L. Espinosa-Anke, and S. Schockaert, ``RAGAS: Automated evaluation of retrieval augmented generation,'' \textit{arXiv preprint arXiv:2309.15217}, 2023.
+\bibitem{lewis2020rag} P. Lewis, et al., ``Retrieval-augmented generation for knowledge-intensive NLP tasks,'' \textit{Adv. Neural Inf. Process. Syst. (NeurIPS)}, vol. 33, pp. 9459--9474, 2020.
+\bibitem{yan2024crag} S.-Q. Yan, et al., ``Corrective retrieval augmented generation,'' \textit{arXiv preprint arXiv:2401.15884}, 2024.
+\bibitem{langgraph2024} LangChain Team, ``LangGraph: Building language agents as cyclic graphs,'' \textit{LangChain Documentation}, 2024. \url{https://langchain-ai.github.io/langgraph/}
+\bibitem{vaswani2017attention} A. Vaswani, et al., ``Attention is all you need,'' \textit{Adv. Neural Inf. Process. Syst. (NeurIPS)}, vol. 30, pp. 5998--6008, 2017.
+\bibitem{es2023ragas} S. Es, et al., ``RAGAS: Automated evaluation of retrieval augmented generation,'' \textit{arXiv preprint arXiv:2309.15217}, 2023.
 \bibitem{gemini2024} Google DeepMind, ``Gemini 1.5 \& 2.5: Multimodal capabilities and context caching architecture,'' \textit{Google Technical Report}, 2024.
 \end{thebibliography}
 
-\vspace{12pt}
-\section*{Appendix: Individual Contribution Form}
-\begin{center}
-\begin{tabular}{|p{0.95\columnwidth}|}
+\newpage
+\appendix
+\section*{Appendix: Individual Contribution Form (5 Members)}
+
+\begin{table}[htbp]
+\centering
+\begin{tabularx}{\textwidth}{|l|p{3.2cm}|p{8.2cm}|c|}
 \hline
-\textbf{INDIVIDUAL CONTRIBUTION FORM} \\
+\textbf{Member} & \textbf{Name \& Student ID} & \textbf{Key Technical Contributions} & \textbf{Share} \\
 \hline
-\textbf{Project Title:} Intelligent Customer Support Agent (LangGraph \& CRAG) \\
-\textbf{Repository:} \texttt{intelligent-customer-support} \\
-\textbf{Submission Date:} October 2026 \\
+\textbf{Member 1} & \textbf{[Student 1 Name]}\newline ID: [Roll No 1] & \textbf{Lead AI Systems Architect \& LangGraph Engine:}\newline $\bullet$ Designed the cyclic StateGraph architecture in \texttt{src/graph.py}.\newline $\bullet$ Implemented the \texttt{SupportAgentState} schema and routing functions.\newline $\bullet$ Coordinated workflow integration and checkpointer persistence. & \textbf{20\%} \\
 \hline
-\textbf{Student 1 Name:} [Your Name] \\
-\textbf{Roll / Student ID:} [Your ID] \\
-\textbf{Assigned Role:} Lead AI Systems Architect \& LangGraph Engineer \\
-\textbf{Key Contributions:} \\
-$\bullet$ Architected and implemented the complete LangGraph StateGraph workflow (\texttt{src/graph.py}). \\
-$\bullet$ Developed the \texttt{SupportAgentState} schema and conditional routing functions. \\
-$\bullet$ Built the Document Relevance Grader (CRAG) node for hallucination mitigation. \\
-$\bullet$ Formulated the Human-in-the-Loop (HITL) escalation pipeline and ticket persistence. \\
-\textbf{Percentage Contribution:} 50\% \\
+\textbf{Member 2} & \textbf{[Student 2 Name]}\newline ID: [Roll No 2] & \textbf{Corrective RAG (CRAG) \& Document Grader Lead:}\newline $\bullet$ Developed the Document Relevance Grader in \texttt{src/nodes/grader.py}.\newline $\bullet$ Implemented the self-corrective retry loop and confidence thresholds.\newline $\bullet$ Conducted hallucination mitigation benchmarks. & \textbf{20\%} \\
 \hline
-\textbf{Student 2 Name:} [Partner Name / Independent Work] \\
-\textbf{Roll / Student ID:} [Partner ID] \\
-\textbf{Assigned Role:} Knowledge Retrieval \& Frontend Application Engineer \\
-\textbf{Key Contributions:} \\
-$\bullet$ Engineered the dual-source knowledge base (3 policies + 3 hardware manuals). \\
-$\bullet$ Implemented the section-aware Markdown chunker and hybrid vector retriever. \\
-$\bullet$ Developed the Streamlit 3-panel web application (Chat, Graph Inspector, Human Desk). \\
-$\bullet$ Executed the 15-scenario empirical evaluation benchmark suite. \\
-\textbf{Percentage Contribution:} 50\% \\
+\textbf{Member 3} & \textbf{[Student 3 Name]}\newline ID: [Roll No 3] & \textbf{Knowledge Base \& Partitioned Retrieval Engineer:}\newline $\bullet$ Curated policy documents and electronic product manuals in \texttt{data/}.\newline $\bullet$ Engineered the section-aware Markdown chunker and vector indexer.\newline $\bullet$ Implemented dual-namespace retrieval and keyword boosting. & \textbf{20\%} \\
 \hline
-\textbf{Declaration:} We hereby declare that this technical report and the accompanying source code represent our original academic and engineering work. \\
-\textbf{Signatures:} \\
-Student 1: \underline{\hspace{4cm}} \quad Date: \underline{\hspace{2.5cm}} \\
-Student 2: \underline{\hspace{4cm}} \quad Date: \underline{\hspace{2.5cm}} \\
+\textbf{Member 4} & \textbf{[Student 4 Name]}\newline ID: [Roll No 4] & \textbf{Operational Action Tools \& Database Engineer:}\newline $\bullet$ Engineered the mock operational database in \texttt{orders.json}.\newline $\bullet$ Built the live tracking lookup and 30-day return window calculator.\newline $\bullet$ Designed the ticket generation engine in \texttt{src/tools.py}. & \textbf{20\%} \\
 \hline
+\textbf{Member 5} & \textbf{[Student 5 Name]}\newline ID: [Roll No 5] & \textbf{Frontend Application \& Cloud Deployment Engineer:}\newline $\bullet$ Developed the Streamlit 3-panel application in \texttt{app.py}.\newline $\bullet$ Built the real-time execution trace visualizer and operator desk.\newline $\bullet$ Configured production Dockerfile and Streamlit Cloud deployment. & \textbf{20\%} \\
+\hline
+\end{tabularx}
+\end{table}
+
+\vspace{0.8cm}
+
+\noindent\textbf{Group Declaration:}\\
+\textit{We hereby declare that this technical report, along with the prototype source code, evaluation results, and deployment artifacts, represents our original collective engineering work completed in accordance with institutional academic integrity guidelines.}
+
+\vspace{0.8cm}
+
+\noindent
+\begin{tabular}{lll}
+\textbf{Student 1:} \underline{\hspace{4.0cm}} & \quad \textbf{Student 2:} \underline{\hspace{4.0cm}} & \quad \textbf{Student 3:} \underline{\hspace{4.0cm}} \\[0.6cm]
+\textbf{Student 4:} \underline{\hspace{4.0cm}} & \quad \textbf{Student 5:} \underline{\hspace{4.0cm}} & \quad \textbf{Date:} \underline{\hspace{2.5cm}}
 \end{tabular}
-\end{center}
 
 \end{document}
