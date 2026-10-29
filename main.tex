@@ -65,20 +65,23 @@
 }
 \lstset{style=mystyle}
 
-% --- Document Header & Authors (Clean Names without Titles) ---
+% --- Document Title & Perfectly Centered Authors (No Job Titles) ---
 \title{\vspace{-1.2cm}\textbf{\Large Intelligent Customer Support Agent}\\[0.2cm]
 \large A Corrective RAG (CRAG) and Human-in-the-Loop Architecture using LangGraph}
 
 \author{
-\textbf{Project Team:}\\[0.2cm]
-\begin{tabular}{ccc}
+\begin{tabular}{c @{\hspace{1.2cm}} c @{\hspace{1.2cm}} c}
 \textbf{Student 1} & \textbf{Student 2} & \textbf{Student 3} \\
 Roll No: [Your ID 1] & Roll No: [Your ID 2] & Roll No: [Your ID 3] \\
-Email: student1@university.edu & Email: student2@university.edu & Email: student3@university.edu \\[0.3cm]
-\multicolumn{2}{c}{\textbf{Student 4}} & \textbf{Student 5} \\
-\multicolumn{2}{c}{Roll No: [Your ID 4]} & Roll No: [Your ID 5] \\
-\multicolumn{2}{c}{Email: student4@university.edu} & Email: student5@university.edu
-\end{tabular}\\[0.3cm]
+student1@university.edu & student2@university.edu & student3@university.edu
+\end{tabular}
+\\[0.4cm]
+\begin{tabular}{c @{\hspace{1.5cm}} c}
+\textbf{Student 4} & \textbf{Student 5} \\
+Roll No: [Your ID 4] & Roll No: [Your ID 5] \\
+student4@university.edu & student5@university.edu
+\end{tabular}
+\\[0.4cm]
 \textit{Department of Computer Science \& Engineering}\\
 \textit{Institution / University Name}
 }
@@ -145,7 +148,7 @@ class SupportAgentState(TypedDict):
 \end{lstlisting}
 
 \subsection{System Workflow Flowchart}
-Figure~\ref{fig:flowchart} illustrates the complete LangGraph decision-making architecture. Notice that all pathways are routed orthogonally to eliminate crossing lines and visual overlapping.
+Figure~\ref{fig:flowchart} illustrates the LangGraph decision-making architecture. Every pathway is placed with explicit spacing and white label badges to ensure completely clean, non-overlapping routing.
 
 \begin{figure}[htbp]
 \centering
@@ -162,7 +165,8 @@ Figure~\ref{fig:flowchart} illustrates the complete LangGraph decision-making ar
     escbox/.style={box, fill=red!15, text width=2.7cm},
     chatbox/.style={box, fill=gray!15, text width=2.5cm},
     decision/.style={diamond, aspect=1.9, draw=black!85, thick, fill=yellow!20, align=center, text width=1.8cm, inner sep=1pt},
-    evalbox/.style={diamond, aspect=1.9, draw=black!85, thick, fill=red!12, align=center, text width=2.1cm, inner sep=1pt}
+    evalbox/.style={diamond, aspect=1.9, draw=black!85, thick, fill=red!12, align=center, text width=2.1cm, inner sep=1pt},
+    lbl/.style={fill=white, inner sep=2pt, font=\scriptsize}
 ]
     % --- Main Center Spine (X = 0) ---
     \node (start) [startbox] at (0, 0) {\textbf{Customer Query} ($q_t$)};
@@ -176,38 +180,38 @@ Figure~\ref{fig:flowchart} illustrates the complete LangGraph decision-making ar
     \node (deliver) [startbox] at (0, -13.4) {\textbf{Deliver Response}};
 
     % --- Left Column (Human Escalation) ---
-    \node (escalator) [escbox] at (-5.5, -5.6) {\textbf{Human Escalation}\\Priority Ticket (HITL)};
+    \node (escalator) [escbox] at (-5.6, -5.6) {\textbf{Human Escalation}\\Priority Ticket (HITL)};
 
     % --- Right Column (Chitchat & Order Tool) ---
-    \node (chitchat) [chatbox] at (5.2, -1.8) {\textbf{Chitchat Node}\\Greetings / Thanks};
-    \node (order) [toolbox] at (5.2, -4.5) {\textbf{Order DB Tool}\\Status \& Return Check};
+    \node (chitchat) [chatbox] at (5.4, -1.8) {\textbf{Chitchat Node}\\Greetings / Thanks};
+    \node (order) [toolbox] at (5.4, -4.6) {\textbf{Order DB Tool}\\Status \& Return Check};
 
     % --- Center Pipeline Arrows ---
     \draw[->, thick] (start) -- (classifier);
-    \draw[->, thick] (classifier) -- node[right] {\footnotesize support} (rewriter);
+    \draw[->, thick] (classifier) -- node[lbl] {support} (rewriter);
     \draw[->, thick] (rewriter) -- (domain);
-    \draw[->, thick] (domain) -| node[above, pos=0.4] {\footnotesize policy} (ret_policy.north);
-    \draw[->, thick] (domain) -| node[above, pos=0.4] {\footnotesize manual} (ret_manual.north);
+    \draw[->, thick] (domain) -| node[lbl, pos=0.3] {policy} (ret_policy.north);
+    \draw[->, thick] (domain) -| node[lbl, pos=0.3] {manual} (ret_manual.north);
     \draw[->, thick] (ret_policy.south) |- (grader.west);
     \draw[->, thick] (ret_manual.south) |- (grader.east);
-    \draw[->, thick] (grader) -- node[right] {\footnotesize \textbf{Pass} ($\ge 0.30$)} (generator);
+    \draw[->, thick] (grader) -- node[lbl] {\textbf{Pass} ($\ge 0.30$)} (generator);
     \draw[->, thick] (generator) -- (deliver);
 
     % --- Left Side Escalation Routes (NO OVERLAPS) ---
-    \draw[->, thick] (classifier.west) -| node[above, pos=0.3] {\footnotesize anger / human} (escalator.north);
-    \draw[->, thick] (grader.west) -- ++(-1.2, 0) |- node[left, pos=0.25] {\footnotesize \textbf{Fail} ($\text{retry} \ge 1$)} (escalator.south);
+    \draw[->, thick] (classifier.west) -| node[lbl, pos=0.3] {anger / human} (escalator.north);
+    \draw[->, thick] (grader.west) -- ++(-1.2, 0) |- node[lbl, pos=0.3] {\textbf{Fail} ($\text{retry} \ge 1$)} (escalator.south);
     \draw[->, thick] (escalator.west) -- ++(-0.6, 0) |- (deliver.west);
 
     % --- Right Side Routes (NO OVERLAPS) ---
-    \draw[->, thick] (classifier.east) -- node[above] {\footnotesize chitchat} (chitchat.west);
+    \draw[->, thick] (classifier.east) -- node[lbl] {chitchat} (chitchat.west);
     \draw[->, thick] (chitchat.east) -- ++(1.8, 0) |- (deliver.east);
     
-    % Order DB routing
-    \draw[->, thick] (classifier.east) ++(0, -0.2) -- ++(1.8, 0) |- node[above, pos=0.7] {\footnotesize order/return} (order.west);
+    % Order DB tool routing cleanly through open gap
+    \draw[->, thick] (classifier.east) ++(0, -0.3) -- ++(1.4, 0) |- node[lbl, pos=0.7] {order / return} (order.west);
     \draw[->, thick] (order.south) -- ++(0, -3.8) |- (grader.east);
 
-    % Clean Red Retry Loop on Far-Right Lane
-    \draw[->, dashed, thick, red] (grader.south east) -- ++(3.2, 0) -- ++(0, 5.8) |- node[above, pos=0.25] {\footnotesize \textbf{Retry} ($< 1$)} (rewriter.east);
+    % Red Retry Loop routed on far outer-right lane (Clear of all boxes)
+    \draw[->, dashed, thick, red] (grader.south) ++(0.6, 0) -- ++(0, -0.5) -- ++(6.8, 0) -- ++(0, 7.3) -| node[lbl, pos=0.3] {\textbf{Retry} ($< 1$)} (rewriter.north east);
 
 \end{tikzpicture}
 }
@@ -251,7 +255,7 @@ Figure~\ref{fig:chat_ui} illustrates the customer chat view. The assistant gener
 \centering
 % Once you upload your screenshot image to Overleaf, uncomment the line below:
 % \includegraphics[width=\linewidth]{screenshot1_chat.png}
-\fbox{\begin{minipage}[c][8.0cm][c]{0.96\linewidth}
+\fbox{\begin{minipage}[c][8.5cm][c]{0.96\linewidth}
 \centering
 \textbf{\large [Figure 1: Customer Support Chat with Citations]}\\[0.3cm]
 \small (Upload your full-width screenshot of Tab 1 to Overleaf as \texttt{screenshot1\_chat.png} and uncomment \texttt{\textbackslash includegraphics})\\[0.2cm]
@@ -268,7 +272,7 @@ Figure~\ref{fig:rewriter_ui} demonstrates coreference resolution across conversa
 \centering
 % Once you upload your screenshot image to Overleaf, uncomment the line below:
 % \includegraphics[width=\linewidth]{screenshot2_rewriter.png}
-\fbox{\begin{minipage}[c][8.0cm][c]{0.96\linewidth}
+\fbox{\begin{minipage}[c][8.5cm][c]{0.96\linewidth}
 \centering
 \textbf{\large [Figure 2: Multi-Turn Query Rewriting \& Disambiguation]}\\[0.3cm]
 \small (Upload your screenshot of the follow-up dialogue to Overleaf as \texttt{screenshot2\_rewriter.png} and uncomment \texttt{\textbackslash includegraphics})\\[0.2cm]
@@ -371,7 +375,7 @@ This project demonstrates that moving from linear RAG pipelines to stateful, cyc
 
 \clearpage
 
-% --- Clean Contributions Section (No 'Appendix', No Subtitle, Stays on One Page) ---
+% --- Clean Contributions Section (No Appendix, No Declaration, Compact on One Page) ---
 \section{Contributions}
 
 \begin{table}[htbp]
@@ -393,18 +397,5 @@ This project demonstrates that moving from linear RAG pipelines to stateful, cyc
 \hline
 \end{tabularx}
 \end{table}
-
-\vspace{0.4cm}
-
-\noindent\textbf{Group Declaration:}\\
-\textit{We hereby declare that this technical report, along with the prototype source code, evaluation results, and deployment artifacts, represents our original collective engineering work completed in accordance with institutional academic integrity guidelines.}
-
-\vspace{0.6cm}
-
-\noindent
-\begin{tabular}{lll}
-\textbf{Student 1:} \underline{\hspace{3.8cm}} & \quad \textbf{Student 2:} \underline{\hspace{3.8cm}} & \quad \textbf{Student 3:} \underline{\hspace{3.8cm}} \\[0.5cm]
-\textbf{Student 4:} \underline{\hspace{3.8cm}} & \quad \textbf{Student 5:} \underline{\hspace{3.8cm}} & \quad \textbf{Date:} \underline{\hspace{2.5cm}}
-\end{tabular}
 
 \end{document}
