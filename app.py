@@ -39,10 +39,13 @@ st.markdown("""
         color: var(--deep-navy);
     }
 
-    /* Canvas background - Reduced shade to crisp clean white */
+    /* Canvas background - Soft Elegant Lavender */
     .stApp {
-        background-color: #ffffff !important;
-        background-image: none !important;
+        background-color: #f5f2f9 !important;
+        background-image: 
+            radial-gradient(at 0% 0%, rgba(171, 157, 255, 0.18) 0px, transparent 55%),
+            radial-gradient(at 100% 100%, rgba(255, 178, 247, 0.14) 0px, transparent 55%) !important;
+        background-attachment: fixed;
     }
 
     /* Sidebar Styling */
