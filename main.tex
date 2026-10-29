@@ -24,31 +24,31 @@
 \lhead{\footnotesize Technical Report}
 \cfoot{\thepage}
 
-% --- Hyperlink Styling ---
+% --- Hyperlink Styling (Clean Professional Links) ---
 \hypersetup{
     colorlinks=true,
-    linkcolor=blue!80!black,
-    filecolor=magenta,      
+    linkcolor=black,
+    filecolor=black,      
     urlcolor=blue!70!black,
-    citecolor=blue!80!black
+    citecolor=black
 }
 
-% --- Section Styling ---
-\titleformat{\section}{\large\bfseries\color{blue!80!black}}{\thesection}{1em}{}
-\titleformat{\subsection}{\normalsize\bfseries\color{black!85}}{\thesubsection}{1em}{}
+% --- Section Styling (100% BLACK Headings) ---
+\titleformat{\section}{\large\bfseries\color{black}}{\thesection}{1em}{}
+\titleformat{\subsection}{\normalsize\bfseries\color{black}}{\thesubsection}{1em}{}
+\titleformat{\subsubsection}{\small\bfseries\color{black}}{\thesubsubsection}{1em}{}
 
 % --- Code Listing Styling ---
-\definecolor{codebg}{rgb}{0.96,0.97,0.98}
-\definecolor{codeblue}{rgb}{0.1,0.2,0.7}
-\definecolor{codegreen}{rgb}{0.1,0.5,0.2}
+\definecolor{codebg}{rgb}{0.97,0.97,0.98}
+\definecolor{codeblack}{rgb}{0.1,0.1,0.1}
 \definecolor{codegray}{rgb}{0.45,0.45,0.45}
 
 \lstdefinestyle{mystyle}{
     backgroundcolor=\color{codebg},   
-    commentstyle=\color{codegreen},
-    keywordstyle=\color{codeblue}\bfseries,
+    commentstyle=\color{codegray},
+    keywordstyle=\color{black}\bfseries,
     numberstyle=\tiny\color{codegray},
-    stringstyle=\color{orange!80!black},
+    stringstyle=\color{black!80},
     basicstyle=\ttfamily\footnotesize,
     breakatwhitespace=false,         
     breaklines=true,                 
@@ -61,21 +61,21 @@
     showtabs=false,                  
     tabsize=2,
     frame=single,
-    rulecolor=\color{black!15}
+    rulecolor=\color{black!20}
 }
 \lstset{style=mystyle}
 
-% --- Document Information ---
-\title{\vspace{-1.5cm}\textbf{\Large Technical Report: Intelligent Customer Support Agent}\\[0.3cm]
-\large Orchestrating Dual-Partitioned Retrieval, Corrective RAG (CRAG), and Human-in-the-Loop Workflows via LangGraph}
+% --- Document Header & Authors (Clean Names without Titles) ---
+\title{\vspace{-1.2cm}\textbf{\Large Intelligent Customer Support Agent}\\[0.2cm]
+\large A Corrective RAG (CRAG) and Human-in-the-Loop Architecture using LangGraph}
 
 \author{
-\textbf{Team Members (Group of 5):}\\[0.2cm]
+\textbf{Project Team:}\\[0.2cm]
 \begin{tabular}{ccc}
-\textbf{Student 1 (Lead Architect)} & \textbf{Student 2 (RAG Engineer)} & \textbf{Student 3 (Knowledge Engineer)} \\
+\textbf{Student 1} & \textbf{Student 2} & \textbf{Student 3} \\
 Roll No: [Your ID 1] & Roll No: [Your ID 2] & Roll No: [Your ID 3] \\
 Email: student1@university.edu & Email: student2@university.edu & Email: student3@university.edu \\[0.3cm]
-\multicolumn{2}{c}{\textbf{Student 4 (Tools \& Database)}} & \textbf{Student 5 (UI \& Deployment)} \\
+\multicolumn{2}{c}{\textbf{Student 4}} & \textbf{Student 5} \\
 \multicolumn{2}{c}{Roll No: [Your ID 4]} & Roll No: [Your ID 5] \\
 \multicolumn{2}{c}{Email: student4@university.edu} & Email: student5@university.edu
 \end{tabular}\\[0.3cm]
@@ -90,23 +90,23 @@ Email: student1@university.edu & Email: student2@university.edu & Email: student
 
 % --- GitHub Repository Banner Box ---
 \begin{center}
-\fcolorbox{blue!60}{blue!5}{
-\begin{minipage}{0.94\textwidth}
+\fcolorbox{black!30}{gray!5}{
+\begin{minipage}{0.95\textwidth}
 \centering
-\textbf{🔗 Project Repository \& Demonstration Artifacts:}\\
-\href{https://github.com/your-username/intelligent-customer-support}{\texttt{https://github.com/your-username/intelligent-customer-support}} \\
-\footnotesize \textit{(Contains complete source code, Streamlit application, evaluation scripts, and dataset files)}
+\textbf{GitHub Repository \& Live Demonstration:}\\
+\url{https://github.com/your-username/intelligent-customer-support} \\
+\footnotesize \textit{(Source code, dataset policies, product manuals, evaluation scripts, and deployment configuration)}
 \end{minipage}
 }
 \end{center}
 
-\vspace{0.3cm}
+\vspace{0.2cm}
 
 \begin{abstract}
 E-commerce enterprises process high volumes of repetitive inquiries regarding return windows, warranty coverage, shipping delays, and hardware troubleshooting. Traditional support systems suffer from severe trade-offs: rule-based bots lack linguistic flexibility, vanilla Large Language Models (LLMs) hallucinate policies, and naive Retrieval-Augmented Generation (RAG) pipelines fail on multi-turn pronoun follow-ups and lack self-correction mechanisms. This paper presents the architecture, implementation, and empirical validation of an enterprise-grade \textbf{Intelligent Customer Support Agent} built upon a cyclic \textbf{LangGraph state machine}. The system introduces three key innovations: (1) \textit{Dual-Source Partitioned Retrieval} to prevent cross-domain vector contamination between company policies and hardware specifications; (2) a \textit{Contextual Query Rewriter} for conversational coreference resolution; and (3) a \textit{Corrective RAG (CRAG)} validation gate coupled with automated \textit{Human-in-the-Loop (HITL)} escalation. Evaluated across 15 canonical e-commerce benchmark scenarios, the proposed architecture eliminates factual hallucinations (0.0\%), resolves multi-turn ambiguous queries with 100\% accuracy, and achieves a 93.3\% autonomous case resolution rate.
 \end{abstract}
 
-\vspace{0.4cm}
+\vspace{0.3cm}
 
 \section{Introduction \& Problem Statement}
 Modern e-commerce enterprises operate under high customer interaction volumes, with over 70\% of inquiries focusing on routine topics: order logistics, returns, warranties, and technical troubleshooting. In traditional support centers, human representatives repeatedly query static PDF manuals and intranet wikis, leading to prolonged response latencies, customer churn, and elevated operational costs (\$6--\$12 per handled ticket).
@@ -145,65 +145,73 @@ class SupportAgentState(TypedDict):
 \end{lstlisting}
 
 \subsection{System Workflow Flowchart}
-Figure~\ref{fig:flowchart} outlines the complete decision-making topology of the agent, showing conditional branching, dual retrieval paths, and the self-corrective retry loop.
+Figure~\ref{fig:flowchart} illustrates the complete LangGraph decision-making architecture. Notice that all pathways are routed orthogonally to eliminate crossing lines and visual overlapping.
 
 \begin{figure}[htbp]
 \centering
-\resizebox{0.95\linewidth}{!}{
+\resizebox{0.96\linewidth}{!}{
 \begin{tikzpicture}[
-    node distance=1.4cm and 1.2cm,
     >=Stealth,
-    base/.style = {rectangle, rounded corners=4pt, draw=black!75, thick, text width=3.2cm, align=center, minimum height=1.1cm, font=\small},
-    startstop/.style = {base, fill=blue!15},
-    process/.style = {base, fill=orange!15},
-    router/.style = {diamond, aspect=1.8, draw=black!75, thick, fill=yellow!25, align=center, font=\small},
-    eval/.style = {diamond, aspect=1.8, draw=black!75, thick, fill=red!15, align=center, font=\small},
-    action/.style = {base, fill=teal!15},
-    escalate/.style = {base, fill=red!25, text width=3.2cm}
+    font=\small,
+    box/.style={rectangle, rounded corners=3pt, draw=black!85, thick, text width=2.9cm, align=center, minimum height=1.0cm},
+    startbox/.style={box, fill=blue!10},
+    procbox/.style={box, fill=orange!12},
+    toolbox/.style={box, fill=teal!12},
+    retbox/.style={box, fill=green!12, text width=2.6cm},
+    genbox/.style={box, fill=purple!12},
+    escbox/.style={box, fill=red!15, text width=2.7cm},
+    chatbox/.style={box, fill=gray!15, text width=2.5cm},
+    decision/.style={diamond, aspect=1.9, draw=black!85, thick, fill=yellow!20, align=center, text width=1.8cm, inner sep=1pt},
+    evalbox/.style={diamond, aspect=1.9, draw=black!85, thick, fill=red!12, align=center, text width=2.1cm, inner sep=1pt}
 ]
-    % Nodes
-    \node (start) [startstop] {\textbf{Customer Query} ($q_t$)};
-    \node (classifier) [process, below=1.0cm of start] {\textbf{1. Classifier Node}\\Intent \& Sentiment};
-    
-    \node (chitchat) [base, fill=gray!20, right=2.0cm of classifier] {\textbf{Chitchat Node}\\Greetings / Thanks};
-    \node (escalator) [escalate, left=2.0cm of classifier] {\textbf{Human Escalation}\\Priority Ticket HITL};
-    
-    \node (rewriter) [process, below=1.2cm of classifier] {\textbf{2. Query Rewriter}\\Coreference Resolution};
-    \node (order) [action, right=2.0cm of rewriter] {\textbf{Order DB Tool}\\Status / Return Calc};
-    
-    \node (domain) [router, below=1.0cm of rewriter] {\textbf{Domain?}};
-    \node (ret_policy) [base, fill=green!15, below left=0.8cm and 0.4cm of domain] {\textbf{3A. Policy Retriever}\\Returns, Shipping, SLA};
-    \node (ret_manual) [base, fill=green!15, below right=0.8cm and 0.4cm of domain] {\textbf{3B. Manual Retriever}\\Hardware Specs, Codes};
-    
-    \node (grader) [eval, below=2.6cm of domain] {\textbf{4. CRAG Grader}\\$\text{Score} \ge 0.30$?};
-    \node (generator) [base, fill=purple!15, below=1.2cm of grader] {\textbf{5. Grounded Generator}\\Answer with Citations};
-    \node (end) [startstop, below=1.0cm of generator] {\textbf{Deliver Response}};
+    % --- Main Center Spine (X = 0) ---
+    \node (start) [startbox] at (0, 0) {\textbf{Customer Query} ($q_t$)};
+    \node (classifier) [procbox] at (0, -1.8) {\textbf{1. Classifier Node}\\Intent \& Sentiment};
+    \node (rewriter) [procbox] at (0, -3.8) {\textbf{2. Query Rewriter}\\Coreference Resolution};
+    \node (domain) [decision] at (0, -5.6) {\textbf{Domain?}};
+    \node (ret_policy) [retbox] at (-2.3, -7.5) {\textbf{3A. Policy Retriever}\\Returns, Shipping, SLA};
+    \node (ret_manual) [retbox] at (2.3, -7.5) {\textbf{3B. Manual Retriever}\\Hardware Specs, Codes};
+    \node (grader) [evalbox] at (0, -9.6) {\textbf{4. CRAG Grader}\\$\text{Score} \ge 0.30$?};
+    \node (generator) [genbox] at (0, -11.6) {\textbf{5. Grounded Generator}\\Answer with Citations};
+    \node (deliver) [startbox] at (0, -13.4) {\textbf{Deliver Response}};
 
-    % Arrows
+    % --- Left Column (Human Escalation) ---
+    \node (escalator) [escbox] at (-5.5, -5.6) {\textbf{Human Escalation}\\Priority Ticket (HITL)};
+
+    % --- Right Column (Chitchat & Order Tool) ---
+    \node (chitchat) [chatbox] at (5.2, -1.8) {\textbf{Chitchat Node}\\Greetings / Thanks};
+    \node (order) [toolbox] at (5.2, -4.5) {\textbf{Order DB Tool}\\Status \& Return Check};
+
+    % --- Center Pipeline Arrows ---
     \draw[->, thick] (start) -- (classifier);
-    \draw[->, thick] (classifier) -- node [above] {chitchat} (chitchat);
-    \draw[->, thick] (classifier) -- node [above] {anger/human} (escalator);
-    \draw[->, thick] (classifier) -- node [right] {support} (rewriter);
-    \draw[->, thick] (classifier) -- node [above] {order/return} (order);
-    
+    \draw[->, thick] (classifier) -- node[right] {\footnotesize support} (rewriter);
     \draw[->, thick] (rewriter) -- (domain);
-    \draw[->, thick] (domain) -| node [above, pos=0.3] {policy} (ret_policy);
-    \draw[->, thick] (domain) -| node [above, pos=0.3] {manual} (ret_manual);
+    \draw[->, thick] (domain) -| node[above, pos=0.4] {\footnotesize policy} (ret_policy.north);
+    \draw[->, thick] (domain) -| node[above, pos=0.4] {\footnotesize manual} (ret_manual.north);
+    \draw[->, thick] (ret_policy.south) |- (grader.west);
+    \draw[->, thick] (ret_manual.south) |- (grader.east);
+    \draw[->, thick] (grader) -- node[right] {\footnotesize \textbf{Pass} ($\ge 0.30$)} (generator);
+    \draw[->, thick] (generator) -- (deliver);
+
+    % --- Left Side Escalation Routes (NO OVERLAPS) ---
+    \draw[->, thick] (classifier.west) -| node[above, pos=0.3] {\footnotesize anger / human} (escalator.north);
+    \draw[->, thick] (grader.west) -- ++(-1.2, 0) |- node[left, pos=0.25] {\footnotesize \textbf{Fail} ($\text{retry} \ge 1$)} (escalator.south);
+    \draw[->, thick] (escalator.west) -- ++(-0.6, 0) |- (deliver.west);
+
+    % --- Right Side Routes (NO OVERLAPS) ---
+    \draw[->, thick] (classifier.east) -- node[above] {\footnotesize chitchat} (chitchat.west);
+    \draw[->, thick] (chitchat.east) -- ++(1.8, 0) |- (deliver.east);
     
-    \draw[->, thick] (ret_policy) |- (grader);
-    \draw[->, thick] (ret_manual) |- (grader);
-    \draw[->, thick] (order) |- (grader);
-    
-    \draw[->, thick] (grader) -- node [right] {\textbf{Pass} ($\ge 0.30$)} (generator);
-    \draw[->, thick] (grader) -| node [near start, above] {\textbf{Fail} ($\text{retry} \ge 1$)} (escalator);
-    \draw[->, dashed, thick, red] (grader.east) -- ++(1.5,0) |- node [pos=0.25, right] {Retry ($< 1$)} (rewriter.east);
-    
-    \draw[->, thick] (generator) -- (end);
-    \draw[->, thick] (chitchat) |- (end);
-    \draw[->, thick] (escalator) |- (end);
+    % Order DB routing
+    \draw[->, thick] (classifier.east) ++(0, -0.2) -- ++(1.8, 0) |- node[above, pos=0.7] {\footnotesize order/return} (order.west);
+    \draw[->, thick] (order.south) -- ++(0, -3.8) |- (grader.east);
+
+    % Clean Red Retry Loop on Far-Right Lane
+    \draw[->, dashed, thick, red] (grader.south east) -- ++(3.2, 0) -- ++(0, 5.8) |- node[above, pos=0.25] {\footnotesize \textbf{Retry} ($< 1$)} (rewriter.east);
+
 \end{tikzpicture}
 }
-\caption{Complete LangGraph State Machine Architecture: Illustrating classification, partitioned retrieval namespaces, the Corrective RAG retry loop, and automated Human-in-the-Loop escalation.}
+\caption{Complete LangGraph State Machine Architecture: Zero-overlap layout detailing intent classification, partitioned retrieval namespaces, Corrective RAG verification, and automated Human-in-the-Loop escalation.}
 \label{fig:flowchart}
 \end{figure}
 
@@ -234,16 +242,21 @@ The system was engineered using Python 3.14 with an emphasis on production modul
 \end{itemize}
 
 \section{System User Interface \& Web Demonstration}
-The web application is implemented in \texttt{app.py} and serves three core interfaces:
+The web application is implemented in \texttt{app.py} and serves three core interfaces. Large-format figures below represent the running system.
 
 \subsection{Customer Support Chat with Grounded Citations}
 Figure~\ref{fig:chat_ui} illustrates the customer chat view. The assistant generates factual answers strictly grounded in official documents and appends clickable/expandable citations.
 
 \begin{figure}[htbp]
 \centering
-% UNCOMMENT BELOW ONCE YOU UPLOAD screenshot1_chat.png TO OVERLEAF:
-% \includegraphics[width=0.88\linewidth]{screenshot1_chat.png}
-\fbox{\begin{minipage}[c][3.8cm][c]{0.88\linewidth}\centering \textbf{[Figure 1: Customer Support Chat with Citations]}\\\small (Upload your screenshot to Overleaf as \texttt{screenshot1\_chat.png} and uncomment \texttt{\textbackslash includegraphics})\end{minipage}}
+% Once you upload your screenshot image to Overleaf, uncomment the line below:
+% \includegraphics[width=\linewidth]{screenshot1_chat.png}
+\fbox{\begin{minipage}[c][8.0cm][c]{0.96\linewidth}
+\centering
+\textbf{\large [Figure 1: Customer Support Chat with Citations]}\\[0.3cm]
+\small (Upload your full-width screenshot of Tab 1 to Overleaf as \texttt{screenshot1\_chat.png} and uncomment \texttt{\textbackslash includegraphics})\\[0.2cm]
+\footnotesize \textit{Shows customer query, grounded response, and expandable verified source citation badge.}
+\end{minipage}}
 \caption{Customer Chat Interface showing grounded policy response and expandable citations badge.}
 \label{fig:chat_ui}
 \end{figure}
@@ -253,9 +266,14 @@ Figure~\ref{fig:rewriter_ui} demonstrates coreference resolution across conversa
 
 \begin{figure}[htbp]
 \centering
-% UNCOMMENT BELOW ONCE YOU UPLOAD screenshot2_rewriter.png TO OVERLEAF:
-% \includegraphics[width=0.88\linewidth]{screenshot2_rewriter.png}
-\fbox{\begin{minipage}[c][3.8cm][c]{0.88\linewidth}\centering \textbf{[Figure 2: Multi-Turn Query Rewriting \& Disambiguation]}\\\small (Upload your screenshot to Overleaf as \texttt{screenshot2\_rewriter.png} and uncomment \texttt{\textbackslash includegraphics})\end{minipage}}
+% Once you upload your screenshot image to Overleaf, uncomment the line below:
+% \includegraphics[width=\linewidth]{screenshot2_rewriter.png}
+\fbox{\begin{minipage}[c][8.0cm][c]{0.96\linewidth}
+\centering
+\textbf{\large [Figure 2: Multi-Turn Query Rewriting \& Disambiguation]}\\[0.3cm]
+\small (Upload your screenshot of the follow-up dialogue to Overleaf as \texttt{screenshot2\_rewriter.png} and uncomment \texttt{\textbackslash includegraphics})\\[0.2cm]
+\footnotesize \textit{Shows how the conversational agent remembers entity references across multi-turn queries.}
+\end{minipage}}
 \caption{Contextual Query Rewriting resolving ambiguous pronouns across turns.}
 \label{fig:rewriter_ui}
 \end{figure}
@@ -265,9 +283,14 @@ Figure~\ref{fig:trace_ui} showcases the live state inspector (Tab 2), displaying
 
 \begin{figure}[htbp]
 \centering
-% UNCOMMENT BELOW ONCE YOU UPLOAD screenshot3_trace.png TO OVERLEAF:
-% \includegraphics[width=0.88\linewidth]{screenshot3_trace.png}
-\fbox{\begin{minipage}[c][3.8cm][c]{0.88\linewidth}\centering \textbf{[Figure 3: Real-Time LangGraph State Inspector]}\\\small (Upload your screenshot to Overleaf as \texttt{screenshot3\_trace.png} and uncomment \texttt{\textbackslash includegraphics})\end{minipage}}
+% Once you upload your screenshot image to Overleaf, uncomment the line below:
+% \includegraphics[width=\linewidth]{screenshot3_trace.png}
+\fbox{\begin{minipage}[c][8.5cm][c]{0.96\linewidth}
+\centering
+\textbf{\large [Figure 3: Real-Time LangGraph State Inspector]}\\[0.3cm]
+\small (Upload your screenshot of Tab 2 to Overleaf as \texttt{screenshot3\_trace.png} and uncomment \texttt{\textbackslash includegraphics})\\[0.2cm]
+\footnotesize \textit{Shows real-time node transitions: Intent Classifier $\rightarrow$ Rewriter $\rightarrow$ Retriever $\rightarrow$ Grader $\rightarrow$ Generator.}
+\end{minipage}}
 \caption{Real-Time LangGraph Execution Inspector tracking node status, retrieval scores, and CRAG verdicts.}
 \label{fig:trace_ui}
 \end{figure}
@@ -277,18 +300,27 @@ Figure~\ref{fig:human_ui} illustrates the operator desk (Tab 3), where escalated
 
 \begin{figure}[htbp]
 \centering
-% UNCOMMENT BELOW ONCE YOU UPLOAD screenshot4_human.png TO OVERLEAF:
-% \includegraphics[width=0.88\linewidth]{screenshot4_human.png}
-\fbox{\begin{minipage}[c][3.8cm][c]{0.88\linewidth}\centering \textbf{[Figure 4: Human-in-the-Loop Support Desk]}\\\small (Upload your screenshot to Overleaf as \texttt{screenshot4\_human.png} and uncomment \texttt{\textbackslash includegraphics})\end{minipage}}
+% Once you upload your screenshot image to Overleaf, uncomment the line below:
+% \includegraphics[width=\linewidth]{screenshot4_human.png}
+\fbox{\begin{minipage}[c][8.5cm][c]{0.96\linewidth}
+\centering
+\textbf{\large [Figure 4: Human-in-the-Loop Support Desk]}\\[0.3cm]
+\small (Upload your screenshot of Tab 3 to Overleaf as \texttt{screenshot4\_human.png} and uncomment \texttt{\textbackslash includegraphics})\\[0.2cm]
+\footnotesize \textit{Shows prioritized open tickets, sentiment detection, ticket metadata, and human response resolution controls.}
+\end{minipage}}
 \caption{Human Agent Desk displaying open priority tickets, sentiment flags, and live resolution controls.}
 \label{fig:human_ui}
 \end{figure}
 
 \section{Cloud Deployment \& Public Hosting}
-To ensure accessibility for academic evaluators, the application is pre-configured for multi-platform cloud deployment:
+To ensure accessibility for evaluators, the application is pre-configured for deployment:
 
 \begin{enumerate}
-    \item \textbf{Streamlit Community Cloud (Free 1-Click Hosting):} Directly linked to the GitHub repository. Connect the repository, set the main file to \texttt{app.py}, configure \texttt{GEMINI\_API_KEY} in Secrets, and deploy to a public URL (e.g., \url{https://novamart-support.streamlit.app}).
+    \item \textbf{Render.com (Native Python / Web Service):} Fully configured via \texttt{render.yaml} and \texttt{Procfile} in the repository. Connect the GitHub repo, select Python 3, set start command to:
+\begin{lstlisting}[language=bash]
+streamlit run app.py --server.port $PORT --server.address 0.0.0.0
+\end{lstlisting}
+    \item \textbf{Streamlit Community Cloud (Free 1-Click Hosting):} Connect the GitHub repo, set the main file to \texttt{app.py}, and deploy to a public URL (e.g., \url{https://novamart-support.streamlit.app}).
     \item \textbf{Containerized Docker Deployment:} A multi-stage production \texttt{Dockerfile} is provided in the repository for deployment to Render, AWS ECS, or Google Cloud Run:
 \begin{lstlisting}[language=bash]
 docker build -t intelligent-customer-support .
@@ -337,40 +369,42 @@ This project demonstrates that moving from linear RAG pipelines to stateful, cyc
 \bibitem{gemini2024} Google DeepMind, ``Gemini 1.5 \& 2.5: Multimodal capabilities and context caching architecture,'' \textit{Google Technical Report}, 2024.
 \end{thebibliography}
 
-\newpage
-\appendix
-\section*{Appendix: Individual Contribution Form (5 Members)}
+\clearpage
+
+% --- Clean Contributions Section (No 'Appendix', No Subtitle, Stays on One Page) ---
+\section{Contributions}
 
 \begin{table}[htbp]
 \centering
-\begin{tabularx}{\textwidth}{|l|p{3.2cm}|p{8.2cm}|c|}
+\small
+\begin{tabularx}{\textwidth}{|l|p{3.2cm}|p{8.5cm}|c|}
 \hline
-\textbf{Member} & \textbf{Name \& Student ID} & \textbf{Key Technical Contributions} & \textbf{Share} \\
+\textbf{Member} & \textbf{Name \& Roll No} & \textbf{Key Technical Deliverables} & \textbf{Share} \\
 \hline
-\textbf{Member 1} & \textbf{[Student 1 Name]}\newline ID: [Roll No 1] & \textbf{Lead AI Systems Architect \& LangGraph Engine:}\newline $\bullet$ Designed the cyclic StateGraph architecture in \texttt{src/graph.py}.\newline $\bullet$ Implemented the \texttt{SupportAgentState} schema and routing functions.\newline $\bullet$ Coordinated workflow integration and checkpointer persistence. & \textbf{20\%} \\
+\textbf{Student 1} & \textbf{Student 1}\newline ID: [Roll No 1] & Designed the cyclic StateGraph architecture in \texttt{src/graph.py}. Implemented the \texttt{SupportAgentState} schema and routing functions. Coordinated workflow integration and checkpointer persistence. & \textbf{20\%} \\
 \hline
-\textbf{Member 2} & \textbf{[Student 2 Name]}\newline ID: [Roll No 2] & \textbf{Corrective RAG (CRAG) \& Document Grader Lead:}\newline $\bullet$ Developed the Document Relevance Grader in \texttt{src/nodes/grader.py}.\newline $\bullet$ Implemented the self-corrective retry loop and confidence thresholds.\newline $\bullet$ Conducted hallucination mitigation benchmarks. & \textbf{20\%} \\
+\textbf{Student 2} & \textbf{Student 2}\newline ID: [Roll No 2] & Developed the Document Relevance Grader in \texttt{src/nodes/grader.py}. Implemented the self-corrective retry loop and confidence thresholds. Conducted hallucination mitigation benchmarks. & \textbf{20\%} \\
 \hline
-\textbf{Member 3} & \textbf{[Student 3 Name]}\newline ID: [Roll No 3] & \textbf{Knowledge Base \& Partitioned Retrieval Engineer:}\newline $\bullet$ Curated policy documents and electronic product manuals in \texttt{data/}.\newline $\bullet$ Engineered the section-aware Markdown chunker and vector indexer.\newline $\bullet$ Implemented dual-namespace retrieval and keyword boosting. & \textbf{20\%} \\
+\textbf{Student 3} & \textbf{Student 3}\newline ID: [Roll No 3] & Curated policy documents and electronic product manuals in \texttt{data/}. Engineered the section-aware Markdown chunker and vector indexer. Implemented dual-namespace retrieval and keyword boosting. & \textbf{20\%} \\
 \hline
-\textbf{Member 4} & \textbf{[Student 4 Name]}\newline ID: [Roll No 4] & \textbf{Operational Action Tools \& Database Engineer:}\newline $\bullet$ Engineered the mock operational database in \texttt{orders.json}.\newline $\bullet$ Built the live tracking lookup and 30-day return window calculator.\newline $\bullet$ Designed the ticket generation engine in \texttt{src/tools.py}. & \textbf{20\%} \\
+\textbf{Student 4} & \textbf{Student 4}\newline ID: [Roll No 4] & Engineered the mock operational database in \texttt{orders.json}. Built the live tracking lookup and 30-day return window calculator. Designed the ticket generation engine in \texttt{src/tools.py}. & \textbf{20\%} \\
 \hline
-\textbf{Member 5} & \textbf{[Student 5 Name]}\newline ID: [Roll No 5] & \textbf{Frontend Application \& Cloud Deployment Engineer:}\newline $\bullet$ Developed the Streamlit 3-panel application in \texttt{app.py}.\newline $\bullet$ Built the real-time execution trace visualizer and operator desk.\newline $\bullet$ Configured production Dockerfile and Streamlit Cloud deployment. & \textbf{20\%} \\
+\textbf{Student 5} & \textbf{Student 5}\newline ID: [Roll No 5] & Developed the Streamlit 3-panel application in \texttt{app.py}. Built the real-time execution trace visualizer and operator desk. Configured production Dockerfile and Render/Streamlit Cloud deployment. & \textbf{20\%} \\
 \hline
 \end{tabularx}
 \end{table}
 
-\vspace{0.8cm}
+\vspace{0.4cm}
 
 \noindent\textbf{Group Declaration:}\\
 \textit{We hereby declare that this technical report, along with the prototype source code, evaluation results, and deployment artifacts, represents our original collective engineering work completed in accordance with institutional academic integrity guidelines.}
 
-\vspace{0.8cm}
+\vspace{0.6cm}
 
 \noindent
 \begin{tabular}{lll}
-\textbf{Student 1:} \underline{\hspace{4.0cm}} & \quad \textbf{Student 2:} \underline{\hspace{4.0cm}} & \quad \textbf{Student 3:} \underline{\hspace{4.0cm}} \\[0.6cm]
-\textbf{Student 4:} \underline{\hspace{4.0cm}} & \quad \textbf{Student 5:} \underline{\hspace{4.0cm}} & \quad \textbf{Date:} \underline{\hspace{2.5cm}}
+\textbf{Student 1:} \underline{\hspace{3.8cm}} & \quad \textbf{Student 2:} \underline{\hspace{3.8cm}} & \quad \textbf{Student 3:} \underline{\hspace{3.8cm}} \\[0.5cm]
+\textbf{Student 4:} \underline{\hspace{3.8cm}} & \quad \textbf{Student 5:} \underline{\hspace{3.8cm}} & \quad \textbf{Date:} \underline{\hspace{2.5cm}}
 \end{tabular}
 
 \end{document}
