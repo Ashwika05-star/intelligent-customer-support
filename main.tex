@@ -14,7 +14,7 @@
 \usepackage{fancyhdr}
 \usepackage{titlesec}
 \usepackage{tabularx}
-\usepackage{float} % Enforces [H] exact placement (Description followed immediately by Image)
+\usepackage{float} % Enforces [H] strict placement (Description followed immediately by Image)
 
 % --- Page Header & Footer ---
 \pagestyle{fancy}
@@ -64,32 +64,21 @@
 }
 \lstset{style=mystyle}
 
-% --- Document Title & Perfectly Centered Authors (5 Students, No Job Titles) ---
-\title{\vspace{-1.2cm}\textbf{\Large Intelligent Customer Support Agent}\\[0.2cm]
+% --- Document Title & Centered Authors (Exact Order, Zero Blank Lines to Prevent Page Breaks) ---
+\title{\vspace{-1.0cm}\textbf{\Large Intelligent Customer Support Agent}\\[0.2cm]
 \large A Corrective RAG (CRAG) and Human-in-the-Loop Architecture using LangGraph}
 
 \author{
-\begin{minipage}{0.96\textwidth}
-\centering
-\begin{tabular}{c @{\hspace{1.5cm}} c @{\hspace{1.5cm}} c}
-\textbf{Student 1} & \textbf{Student 2} & \textbf{Student 3} \\
-Roll No: [Your ID 1] & Roll No: [Your ID 2] & Roll No: [Your ID 3] \\
-student1@university.edu & student2@university.edu & student3@university.edu
-\end{tabular}
-
-\vspace{0.35cm}
-
+\begin{tabular}{c @{\hspace{1.2cm}} c @{\hspace{1.2cm}} c}
+\textbf{Ashwika Sinha} & \textbf{Harsh Thakkar} & \textbf{Ayush Trivedi} \\
+Roll No: N099 & Roll No: N105 & Roll No: N109
+\end{tabular}\\[0.35cm]
 \begin{tabular}{c @{\hspace{1.8cm}} c}
-\textbf{Student 4} & \textbf{Student 5} \\
-Roll No: [Your ID 4] & Roll No: [Your ID 5] \\
-student4@university.edu & student5@university.edu
-\end{tabular}
-
-\vspace{0.4cm}
-
+\textbf{Akshat Vidyarthi} & \textbf{Apar Yadav} \\
+Roll No: N116 & Roll No: N120
+\end{tabular}\\[0.35cm]
 \textit{Department of Computer Science \& Engineering}\\
 \textit{Institution / University Name}
-\end{minipage}
 }
 \date{October 2026}
 
@@ -325,7 +314,7 @@ Mean LLM Generation Latency & 1.12 s & \textbf{1.45 s} & +0.33 s \\
 \section{Conclusion}
 This project demonstrates that moving from linear RAG pipelines to stateful, cyclic \textbf{LangGraph workflows} resolves the core challenges of automated customer support: eliminating hallucinations, handling multi-turn conversational follow-ups, executing operational tools, and providing robust human-in-the-loop escalation.
 
-% --- Clean Contributions Section (Placed ABOVE References, No Declaration, No Roles) ---
+% --- Clean Contributions Section (Placed ABOVE References, Exact Student Details in Order) ---
 \section{Contributions}
 
 \begin{table}[H]
@@ -335,15 +324,15 @@ This project demonstrates that moving from linear RAG pipelines to stateful, cyc
 \hline
 \textbf{Member} & \textbf{Name \& Roll No} & \textbf{Key Technical Deliverables} & \textbf{Share} \\
 \hline
-\textbf{Student 1} & \textbf{Student 1}\newline ID: [Roll No 1] & Designed the cyclic StateGraph architecture in \texttt{src/graph.py}. Implemented the \texttt{SupportAgentState} schema and routing functions. Coordinated workflow integration and checkpointer persistence. & \textbf{20\%} \\
+\textbf{Student 1} & \textbf{Ashwika Sinha}\newline ID: N099 & Designed the cyclic StateGraph architecture in \texttt{src/graph.py}. Implemented the \texttt{SupportAgentState} schema, state checkpoints (\texttt{MemorySaver}), and conditional graph routing. & \textbf{20\%} \\
 \hline
-\textbf{Student 2} & \textbf{Student 2}\newline ID: [Roll No 2] & Developed the Document Relevance Grader in \texttt{src/nodes/grader.py}. Implemented the self-corrective retry loop and confidence thresholds. Conducted hallucination mitigation benchmarks. & \textbf{20\%} \\
+\textbf{Student 2} & \textbf{Harsh Thakkar}\newline ID: N105 & Developed the Corrective RAG (CRAG) document grader in \texttt{src/nodes/grader.py}. Implemented the self-corrective retry loop and confidence score thresholding ($\tau \ge 0.30$). & \textbf{20\%} \\
 \hline
-\textbf{Student 3} & \textbf{Student 3}\newline ID: [Roll No 3] & Curated policy documents and electronic product manuals in \texttt{data/}. Engineered the section-aware Markdown chunker and vector indexer. Implemented dual-namespace retrieval and keyword boosting. & \textbf{20\%} \\
+\textbf{Student 3} & \textbf{Ayush Trivedi}\newline ID: N109 & Curated policy corpora and electronic product manuals in \texttt{data/}. Engineered the section-aware Markdown chunker and dual-partitioned vector retriever in \texttt{src/retriever.py}. & \textbf{20\%} \\
 \hline
-\textbf{Student 4} & \textbf{Student 4}\newline ID: [Roll No 4] & Engineered the mock operational database in \texttt{orders.json}. Built the live tracking lookup and 30-day return window calculator. Designed the ticket generation engine in \texttt{src/tools.py}. & \textbf{20\%} \\
+\textbf{Student 4} & \textbf{Akshat Vidyarthi}\newline ID: N116 & Engineered the mock operational database in \texttt{orders.json}. Built the live tracking lookup and 30-day return eligibility engine. Designed the ticketing system in \texttt{src/tools.py}. & \textbf{20\%} \\
 \hline
-\textbf{Student 5} & \textbf{Student 5}\newline ID: [Roll No 5] & Developed the Streamlit 3-panel application in \texttt{app.py}. Built the real-time execution trace visualizer and operator desk. Configured production Dockerfile and Render/Streamlit Cloud deployment. & \textbf{20\%} \\
+\textbf{Student 5} & \textbf{Apar Yadav}\newline ID: N120 & Developed the Streamlit 3-panel application in \texttt{app.py}. Built the real-time execution trace visualizer and operator desk. Configured production Dockerfile and Render/Cloud deployment. & \textbf{20\%} \\
 \hline
 \end{tabularx}
 \end{table}
