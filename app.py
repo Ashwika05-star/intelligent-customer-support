@@ -20,33 +20,255 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# Custom Styling
+# Custom Styling using exact Palette:
+# Midnight: #0b1957 | Sapphire: #426bc2 | Petal: #e8d9ed | Lace: #f7f4ed | Lavender: #d2b3db | Bridal Blue: #e9f3ff
 st.markdown("""
 <style>
-    .reportview-container {
-        background: #fdfdfd;
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+
+    :root {
+        --midnight: #0b1957;
+        --sapphire: #426bc2;
+        --petal: #e8d9ed;
+        --lace: #f7f4ed;
+        --lavender: #d2b3db;
+        --bridal-blue: #e9f3ff;
     }
-    .metric-card {
-        background: #f8f9fa;
-        border-radius: 8px;
-        padding: 12px;
-        border: 1px solid #e9ecef;
-        margin-bottom: 8px;
+
+    html, body, [class*="css"] {
+        font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
+        color: var(--midnight);
     }
+
+    /* Background canvas */
+    .stApp {
+        background-color: var(--lace);
+        background-image: 
+            radial-gradient(at 0% 0%, rgba(233, 243, 255, 0.75) 0px, transparent 50%),
+            radial-gradient(at 100% 100%, rgba(232, 217, 237, 0.55) 0px, transparent 50%);
+        background-attachment: fixed;
+    }
+
+    /* Sidebar styling */
+    section[data-testid="stSidebar"] {
+        background-color: #f3efe6;
+        border-right: 1.5px solid var(--lavender);
+    }
+    section[data-testid="stSidebar"] h1, 
+    section[data-testid="stSidebar"] h2, 
+    section[data-testid="stSidebar"] h3 {
+        color: var(--midnight) !important;
+        font-weight: 700;
+    }
+
+    /* Top Hero Header Card */
+    .hero-header {
+        background: linear-gradient(135deg, #0b1957 0%, #172d79 50%, #426bc2 100%);
+        border-radius: 18px;
+        padding: 24px 30px;
+        color: #ffffff;
+        box-shadow: 0 10px 25px -5px rgba(11, 25, 87, 0.18);
+        margin-bottom: 22px;
+        border: 1px solid rgba(255, 255, 255, 0.15);
+    }
+    .hero-title {
+        font-size: 1.85rem;
+        font-weight: 800;
+        margin: 0;
+        letter-spacing: -0.02em;
+        color: #ffffff;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+    .hero-subtitle {
+        font-size: 0.95rem;
+        color: rgba(255, 255, 255, 0.90);
+        margin-top: 6px;
+        margin-bottom: 14px;
+        line-height: 1.4;
+    }
+    .pill-badges-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+    .hero-pill {
+        font-size: 0.78rem;
+        font-weight: 600;
+        padding: 4px 12px;
+        border-radius: 20px;
+        background: rgba(255, 255, 255, 0.16);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        backdrop-filter: blur(8px);
+        color: #ffffff;
+    }
+    .hero-pill.glow {
+        background: rgba(233, 243, 255, 0.25);
+        border-color: #e9f3ff;
+        color: #ffffff;
+    }
+
+    /* Tab Bar Styling */
+    div[data-baseweb="tab-list"] {
+        background-color: rgba(255, 255, 255, 0.75);
+        border-radius: 14px;
+        padding: 6px;
+        border: 1.5px solid var(--lavender);
+        gap: 6px;
+        margin-bottom: 18px;
+    }
+    div[data-baseweb="tab"] {
+        border-radius: 10px;
+        padding: 10px 20px;
+        color: var(--midnight);
+        font-weight: 600;
+        font-size: 0.92rem;
+        transition: all 0.2s ease;
+    }
+    div[data-baseweb="tab"]:hover {
+        background-color: var(--petal);
+        color: var(--midnight);
+    }
+    div[data-baseweb="tab"][aria-selected="true"] {
+        background-color: var(--sapphire) !important;
+        color: #ffffff !important;
+        box-shadow: 0 4px 12px rgba(66, 107, 194, 0.3);
+    }
+
+    /* Chat Message Styling */
+    div[data-testid="stChatMessage"] {
+        border-radius: 16px;
+        padding: 16px 20px;
+        margin-bottom: 14px;
+        box-shadow: 0 2px 8px rgba(11, 25, 87, 0.04);
+    }
+    /* User Message: Petal palette */
+    div[data-testid="stChatMessage"]:has(div[data-testid="chatAvatarIcon-user"]) {
+        background-color: var(--petal) !important;
+        border: 1px solid var(--lavender) !important;
+        color: var(--midnight) !important;
+    }
+    /* Assistant Message: Bridal Blue palette with Sapphire accent bar */
+    div[data-testid="stChatMessage"]:has(div[data-testid="chatAvatarIcon-assistant"]) {
+        background-color: var(--bridal-blue) !important;
+        border-left: 4px solid var(--sapphire) !important;
+        border-top: 1px solid #dbeafe !important;
+        border-right: 1px solid #dbeafe !important;
+        border-bottom: 1px solid #dbeafe !important;
+        color: var(--midnight) !important;
+    }
+
+    /* Citation Tags */
     .citation-tag {
-        display: inline-block;
-        background: #eef2ff;
-        color: #3730a3;
-        border: 1px solid #c7d2fe;
-        border-radius: 12px;
-        padding: 2px 10px;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: #ffffff;
+        color: var(--midnight);
+        border: 1.5px solid var(--lavender);
+        border-radius: 20px;
+        padding: 4px 12px;
         font-size: 0.8rem;
-        margin: 2px 4px 2px 0px;
+        font-weight: 600;
+        margin: 4px 6px 4px 0px;
+        box-shadow: 0 1px 3px rgba(11, 25, 87, 0.06);
+        transition: all 0.2s ease;
     }
-    .step-box {
-        border-left: 3px solid #4f46e5;
-        padding-left: 10px;
+    .citation-tag:hover {
+        border-color: var(--sapphire);
+        color: var(--sapphire);
+        transform: translateY(-1px);
+    }
+
+    /* Metric Cards */
+    .custom-metric-card {
+        background: #ffffff;
+        border: 1.5px solid var(--lavender);
+        border-radius: 14px;
+        padding: 18px 22px;
+        box-shadow: 0 4px 12px rgba(11, 25, 87, 0.04);
+        margin-bottom: 14px;
+    }
+    .custom-metric-title {
+        font-size: 0.82rem;
+        font-weight: 700;
+        color: var(--sapphire);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+    .custom-metric-value {
+        font-size: 2.1rem;
+        font-weight: 800;
+        color: var(--midnight);
+        margin-top: 4px;
+        line-height: 1.1;
+    }
+
+    /* Buttons in Sidebar & App */
+    .stButton > button {
+        border-radius: 10px;
+        border: 1.5px solid var(--lavender);
+        background-color: #ffffff;
+        color: var(--midnight);
+        font-weight: 600;
+        transition: all 0.2s ease;
+        padding: 8px 14px;
+    }
+    .stButton > button:hover {
+        background-color: var(--sapphire);
+        color: #ffffff !important;
+        border-color: var(--midnight);
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(66, 107, 194, 0.25);
+    }
+
+    /* Chat Input Styling */
+    div[data-testid="stChatInput"] {
+        border-radius: 16px;
+        border: 1.5px solid var(--lavender);
+        background-color: #ffffff;
+        box-shadow: 0 4px 14px rgba(11, 25, 87, 0.06);
+    }
+    div[data-testid="stChatInput"]:focus-within {
+        border-color: var(--sapphire);
+        box-shadow: 0 0 0 3px rgba(66, 107, 194, 0.18);
+    }
+
+    /* Expanders */
+    .streamlit-expanderHeader {
+        background-color: rgba(255, 255, 255, 0.85) !important;
+        border-radius: 10px !important;
+        font-weight: 600 !important;
+        color: var(--midnight) !important;
+    }
+    div[data-testid="stExpander"] {
+        background-color: #ffffff;
+        border: 1px solid var(--lavender);
+        border-radius: 12px;
+        box-shadow: 0 2px 6px rgba(11, 25, 87, 0.03);
         margin-bottom: 12px;
+    }
+
+    /* Quick Feature Cards */
+    .feature-card {
+        background: #ffffff;
+        border: 1.5px solid var(--lavender);
+        border-radius: 12px;
+        padding: 16px;
+        box-shadow: 0 2px 8px rgba(11, 25, 87, 0.04);
+        margin-bottom: 10px;
+    }
+    .feature-card h4 {
+        margin: 0 0 6px 0;
+        color: var(--midnight);
+        font-size: 0.98rem;
+    }
+    .feature-card p {
+        margin: 0;
+        color: #4a5568;
+        font-size: 0.85rem;
+        line-height: 1.4;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -61,7 +283,15 @@ if "session_thread_id" not in st.session_state:
 
 # ----------------- SIDEBAR -----------------
 with st.sidebar:
-    st.title("⚙️ Agent Controls")
+    st.markdown("""
+    <div style='display: flex; align-items: center; gap: 10px; margin-bottom: 14px;'>
+        <div style='background: #0b1957; color: white; width: 36px; height: 36px; border-radius: 9px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem;'>🛍️</div>
+        <div>
+            <div style='font-weight: 800; font-size: 1.15rem; color: #0b1957; line-height: 1.1;'>NovaMart</div>
+            <div style='font-size: 0.78rem; color: #426bc2; font-weight: 600;'>Agent Control Center</div>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
     
     # API Key Configuration
     st.markdown("### 🔑 LLM Provider")
@@ -88,7 +318,7 @@ with st.sidebar:
     # Quick Test Presets
     st.markdown("### 🧪 Quick Test Scenarios")
     quick_queries = [
-        ("📦 Policy Query", "What is the return window and how much is the return shipping fee?"),
+        ("📦 Policy Return Window", "What is the return window and how much is the return shipping fee?"),
         ("🎧 Product Specs", "What is the battery life and water resistance of the AuraSound Pro headphones?"),
         ("🔄 Multi-turn Follow-up", "Does it support multipoint Bluetooth pairing?"),
         ("🚚 Track Order (In Transit)", "Where is my order ORD-98214?"),
@@ -107,8 +337,22 @@ with st.sidebar:
         st.rerun()
 
 # ----------------- MAIN INTERFACE -----------------
-st.title("🛍️ NovaMart Intelligent Support Assistant")
-st.caption("Powered by **LangGraph State Machine**, **Self-Corrective RAG (CRAG)**, and **Human-in-the-Loop Escalation**")
+st.markdown("""
+<div class='hero-header'>
+    <div class='hero-title'>
+        <span>🛍️ NovaMart Intelligent Support Assistant</span>
+    </div>
+    <div class='hero-subtitle'>
+        Enterprise-grade customer care powered by a stateful <b>LangGraph cyclic state machine</b>, <b>Corrective RAG (CRAG)</b> verification, and <b>Human-in-the-Loop</b> escalation.
+    </div>
+    <div class='pill-badges-row'>
+        <span class='hero-pill glow'>⚡ LangGraph Cyclic Graph</span>
+        <span class='hero-pill glow'>🛡️ CRAG Relevance Gate (τ ≥ 0.30)</span>
+        <span class='hero-pill glow'>🔍 Dual-Partitioned Retrieval</span>
+        <span class='hero-pill'>👨‍💼 Human-in-the-Loop Escalation</span>
+    </div>
+</div>
+""", unsafe_allow_html=True)
 
 tab_chat, tab_graph, tab_human = st.tabs([
     "💬 Customer Support Chat",
@@ -118,6 +362,32 @@ tab_chat, tab_graph, tab_human = st.tabs([
 
 # ----------------- TAB 1: CUSTOMER CHAT -----------------
 with tab_chat:
+    # If no messages yet, show nice welcome guidance cards
+    if not st.session_state.messages:
+        col_w1, col_w2, col_w3 = st.columns(3)
+        with col_w1:
+            st.markdown("""
+            <div class='feature-card'>
+                <h4>📦 Policy & Shipping</h4>
+                <p>Ask about return policies, 30-day coverage, warranty terms, and international freight rules.</p>
+            </div>
+            """, unsafe_allow_html=True)
+        with col_w2:
+            with st.container():
+                st.markdown("""
+                <div class='feature-card'>
+                    <h4>🎧 Product Specs & Specs</h4>
+                    <p>Troubleshoot hardware, battery endurance, pairing, and error codes for NovaMart electronics.</p>
+                </div>
+                """, unsafe_allow_html=True)
+        with col_w3:
+            st.markdown("""
+            <div class='feature-card'>
+                <h4>🚚 Live Order Operations</h4>
+                <p>Provide an order ID like <code>ORD-98214</code> to track live transit or verify return eligibility.</p>
+            </div>
+            """, unsafe_allow_html=True)
+
     # Display message history
     for msg in st.session_state.messages:
         role = msg.get("role", "user")
@@ -126,13 +396,13 @@ with tab_chat:
             
             # Show citations if present
             if msg.get("citations"):
-                with st.expander("📚 Verified Sources Cited"):
+                with st.expander("📚 Verified Source Citations"):
                     for c in msg["citations"]:
                         st.markdown(f"<span class='citation-tag'>📄 {c}</span>", unsafe_allow_html=True)
             
             # Show escalation alert if present
             if msg.get("is_escalated"):
-                st.warning(f"⚠️ **Escalated to Human Support** | Ticket: `{msg.get('ticket_id', 'N/A')}`")
+                st.warning(f"⚠️ **Escalated to Human Support** | Ticket ID: `{msg.get('ticket_id', 'N/A')}`")
 
     # Chat input
     prompt_to_send = None
@@ -140,7 +410,7 @@ with tab_chat:
         prompt_to_send = st.session_state.current_prompt
         st.session_state.current_prompt = None
     else:
-        chat_val = st.chat_input("Type your question (e.g., 'How long does shipping take?' or 'Where is ORD-98214?')...")
+        chat_val = st.chat_input("Type your question (e.g., 'What is the return window for headphones?' or 'Where is ORD-98214?')...")
         if chat_val:
             prompt_to_send = chat_val
 
@@ -185,12 +455,12 @@ with tab_chat:
                 st.markdown(resp_text)
                 
                 if citations:
-                    with st.expander("📚 Verified Sources Cited"):
+                    with st.expander("📚 Verified Source Citations"):
                         for c in citations:
                             st.markdown(f"<span class='citation-tag'>📄 {c}</span>", unsafe_allow_html=True)
                 
                 if is_escalated:
-                    st.warning(f"⚠️ **Escalated to Human Support** | Ticket ID: `{ticket_id}`")
+                    st.warning(f"⚠️ **Escalated to Human Support** | Priority Ticket ID: `{ticket_id}`")
 
                 # Store assistant response and execution steps
                 st.session_state.messages.append({
@@ -205,7 +475,7 @@ with tab_chat:
 
 # ----------------- TAB 2: LANGGRAPH WORKFLOW INSPECTOR -----------------
 with tab_graph:
-    st.subheader("🔍 Real-time LangGraph Execution Trace")
+    st.subheader("🔍 Real-Time LangGraph Execution Trace")
     st.markdown("Inspect how the LangGraph State Machine routed the query, rewrote multi-turn context, retrieved documents, and graded relevance.")
 
     if not st.session_state.last_steps:
@@ -256,19 +526,28 @@ flowchart TD
 # ----------------- TAB 3: HUMAN AGENT DESK (HITL) -----------------
 with tab_human:
     st.subheader("👨‍💼 Human Support Escalation Portal")
-    st.markdown("Unresolved queries, low-confidence retrievals, and frustrated customer messages are automatically placed in this priority inbox.")
+    st.markdown("Unresolved queries, low-confidence retrievals, and frustrated customer messages are automatically routed here for live human triage.")
 
     tickets = load_tickets()
     
     col_t1, col_t2 = st.columns([1, 3])
     with col_t1:
-        st.metric("Total Escalated Tickets", len(tickets))
         open_count = sum(1 for t in tickets if t.get("status") == "OPEN")
-        st.metric("Open Pending Reviews", open_count)
+        
+        st.markdown(f"""
+        <div class='custom-metric-card'>
+            <div class='custom-metric-title'>Total Escalated Tickets</div>
+            <div class='custom-metric-value'>{len(tickets)}</div>
+        </div>
+        <div class='custom-metric-card'>
+            <div class='custom-metric-title'>Open Pending Reviews</div>
+            <div class='custom-metric-value' style='color: {'#dc2626' if open_count > 0 else '#16a34a'};'>{open_count}</div>
+        </div>
+        """, unsafe_allow_html=True)
 
     with col_t2:
         if not tickets:
-            st.success("🎉 No escalated tickets currently pending! The automated agent is successfully resolving incoming queries.")
+            st.success("🎉 No escalated tickets currently pending! The automated agent is successfully resolving incoming customer queries.")
         else:
             for ticket in tickets:
                 status_color = "🔴" if ticket.get("status") == "OPEN" else "🟢"
