@@ -12,263 +12,312 @@ from src.llm import get_llm_service
 from src.tools import load_tickets, resolve_ticket, load_orders
 from src.config import DEFAULT_GEMINI_MODEL, CATEGORIES
 
-# Page Configuration
+# Page Configuration - Clean Professional, Zero Emojis
 st.set_page_config(
     page_title="NovaMart Support Agent | LangGraph RAG",
-    page_icon="🛍️",
     layout="wide",
     initial_sidebar_state="expanded"
 )
 
-# Custom Styling using exact Palette:
-# Midnight: #0b1957 | Sapphire: #426bc2 | Petal: #e8d9ed | Lace: #f7f4ed | Lavender: #d2b3db | Bridal Blue: #e9f3ff
+# Custom Styling with Exact 6-Color Palette:
+# Deep Navy: #253A82 | Periwinkle Blue: #88A2FF | Neon Lime: #E3FC87 | Bright Pink: #FFB2F7 | Light Sky Blue: #C0E0FF | Rich Violet: #AB9DFF
 st.markdown("""
 <style>
-    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
 
     :root {
-        --midnight: #0b1957;
-        --sapphire: #426bc2;
-        --petal: #e8d9ed;
-        --lace: #f7f4ed;
-        --lavender: #d2b3db;
-        --bridal-blue: #e9f3ff;
+        --deep-navy: #253A82;
+        --periwinkle: #88A2FF;
+        --neon-lime: #E3FC87;
+        --bright-pink: #FFB2F7;
+        --light-sky: #C0E0FF;
+        --rich-violet: #AB9DFF;
     }
 
     html, body, [class*="css"] {
         font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
-        color: var(--midnight);
+        color: var(--deep-navy);
     }
 
-    /* Background canvas */
+    /* Canvas background */
     .stApp {
-        background-color: var(--lace);
+        background-color: #f7fafe !important;
         background-image: 
-            radial-gradient(at 0% 0%, rgba(233, 243, 255, 0.75) 0px, transparent 50%),
-            radial-gradient(at 100% 100%, rgba(232, 217, 237, 0.55) 0px, transparent 50%);
+            radial-gradient(at 0% 0%, rgba(192, 224, 255, 0.45) 0px, transparent 55%),
+            radial-gradient(at 100% 100%, rgba(255, 178, 247, 0.25) 0px, transparent 55%);
         background-attachment: fixed;
     }
 
-    /* Sidebar styling */
+    /* Sidebar Styling */
     section[data-testid="stSidebar"] {
-        background-color: #f3efe6;
-        border-right: 1.5px solid var(--lavender);
+        background-color: #eef5fc !important;
+        border-right: 2px solid var(--periwinkle) !important;
     }
     section[data-testid="stSidebar"] h1, 
     section[data-testid="stSidebar"] h2, 
     section[data-testid="stSidebar"] h3 {
-        color: var(--midnight) !important;
-        font-weight: 700;
+        color: var(--deep-navy) !important;
+        font-weight: 800;
+        letter-spacing: -0.01em;
     }
 
     /* Top Hero Header Card */
-    .hero-header {
-        background: linear-gradient(135deg, #0b1957 0%, #172d79 50%, #426bc2 100%);
-        border-radius: 18px;
-        padding: 24px 30px;
+    .hero-container {
+        background: var(--deep-navy);
+        border-radius: 16px;
+        padding: 24px 28px;
         color: #ffffff;
-        box-shadow: 0 10px 25px -5px rgba(11, 25, 87, 0.18);
-        margin-bottom: 22px;
-        border: 1px solid rgba(255, 255, 255, 0.15);
+        box-shadow: 0 12px 28px -6px rgba(37, 58, 130, 0.28);
+        margin-bottom: 20px;
+        border: 2px solid var(--periwinkle);
     }
-    .hero-title {
+    .hero-title-text {
         font-size: 1.85rem;
         font-weight: 800;
         margin: 0;
         letter-spacing: -0.02em;
         color: #ffffff;
-        display: flex;
-        align-items: center;
-        gap: 12px;
     }
-    .hero-subtitle {
+    .hero-sub-text {
         font-size: 0.95rem;
-        color: rgba(255, 255, 255, 0.90);
+        color: var(--light-sky);
         margin-top: 6px;
-        margin-bottom: 14px;
-        line-height: 1.4;
+        margin-bottom: 16px;
+        line-height: 1.45;
+        font-weight: 500;
     }
-    .pill-badges-row {
+    .badge-strip {
         display: flex;
         flex-wrap: wrap;
-        gap: 8px;
+        gap: 10px;
     }
-    .hero-pill {
-        font-size: 0.78rem;
-        font-weight: 600;
-        padding: 4px 12px;
-        border-radius: 20px;
-        background: rgba(255, 255, 255, 0.16);
-        border: 1px solid rgba(255, 255, 255, 0.3);
-        backdrop-filter: blur(8px);
-        color: #ffffff;
-    }
-    .hero-pill.glow {
-        background: rgba(233, 243, 255, 0.25);
-        border-color: #e9f3ff;
-        color: #ffffff;
-    }
-
-    /* Tab Bar Styling */
-    div[data-baseweb="tab-list"] {
-        background-color: rgba(255, 255, 255, 0.75);
-        border-radius: 14px;
-        padding: 6px;
-        border: 1.5px solid var(--lavender);
-        gap: 6px;
-        margin-bottom: 18px;
-    }
-    div[data-baseweb="tab"] {
-        border-radius: 10px;
-        padding: 10px 20px;
-        color: var(--midnight);
-        font-weight: 600;
-        font-size: 0.92rem;
-        transition: all 0.2s ease;
-    }
-    div[data-baseweb="tab"]:hover {
-        background-color: var(--petal);
-        color: var(--midnight);
-    }
-    div[data-baseweb="tab"][aria-selected="true"] {
-        background-color: var(--sapphire) !important;
-        color: #ffffff !important;
-        box-shadow: 0 4px 12px rgba(66, 107, 194, 0.3);
-    }
-
-    /* Chat Message Styling */
-    div[data-testid="stChatMessage"] {
-        border-radius: 16px;
-        padding: 16px 20px;
-        margin-bottom: 14px;
-        box-shadow: 0 2px 8px rgba(11, 25, 87, 0.04);
-    }
-    /* User Message: Petal palette */
-    div[data-testid="stChatMessage"]:has(div[data-testid="chatAvatarIcon-user"]) {
-        background-color: var(--petal) !important;
-        border: 1px solid var(--lavender) !important;
-        color: var(--midnight) !important;
-    }
-    /* Assistant Message: Bridal Blue palette with Sapphire accent bar */
-    div[data-testid="stChatMessage"]:has(div[data-testid="chatAvatarIcon-assistant"]) {
-        background-color: var(--bridal-blue) !important;
-        border-left: 4px solid var(--sapphire) !important;
-        border-top: 1px solid #dbeafe !important;
-        border-right: 1px solid #dbeafe !important;
-        border-bottom: 1px solid #dbeafe !important;
-        color: var(--midnight) !important;
-    }
-
-    /* Citation Tags */
-    .citation-tag {
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        background: #ffffff;
-        color: var(--midnight);
-        border: 1.5px solid var(--lavender);
-        border-radius: 20px;
-        padding: 4px 12px;
-        font-size: 0.8rem;
-        font-weight: 600;
-        margin: 4px 6px 4px 0px;
-        box-shadow: 0 1px 3px rgba(11, 25, 87, 0.06);
-        transition: all 0.2s ease;
-    }
-    .citation-tag:hover {
-        border-color: var(--sapphire);
-        color: var(--sapphire);
-        transform: translateY(-1px);
-    }
-
-    /* Metric Cards */
-    .custom-metric-card {
-        background: #ffffff;
-        border: 1.5px solid var(--lavender);
-        border-radius: 14px;
-        padding: 18px 22px;
-        box-shadow: 0 4px 12px rgba(11, 25, 87, 0.04);
-        margin-bottom: 14px;
-    }
-    .custom-metric-title {
-        font-size: 0.82rem;
+    .brand-badge {
+        font-size: 0.76rem;
         font-weight: 700;
-        color: var(--sapphire);
+        padding: 5px 12px;
+        border-radius: 20px;
         text-transform: uppercase;
         letter-spacing: 0.05em;
     }
-    .custom-metric-value {
-        font-size: 2.1rem;
+    .badge-lime {
+        background-color: var(--neon-lime);
+        color: var(--deep-navy);
+        border: 1px solid var(--neon-lime);
+    }
+    .badge-periwinkle {
+        background-color: var(--periwinkle);
+        color: #ffffff;
+        border: 1px solid var(--periwinkle);
+    }
+    .badge-pink {
+        background-color: var(--bright-pink);
+        color: var(--deep-navy);
+        border: 1px solid var(--bright-pink);
+    }
+    .badge-violet {
+        background-color: var(--rich-violet);
+        color: #ffffff;
+        border: 1px solid var(--rich-violet);
+    }
+
+    /* Tab Navigation */
+    div[data-baseweb="tab-list"] {
+        background-color: #ffffff !important;
+        border-radius: 14px !important;
+        padding: 6px !important;
+        border: 2px solid var(--periwinkle) !important;
+        gap: 8px !important;
+        margin-bottom: 20px !important;
+    }
+    div[data-baseweb="tab"] {
+        border-radius: 10px !important;
+        padding: 10px 22px !important;
+        color: var(--deep-navy) !important;
+        font-weight: 700 !important;
+        font-size: 0.92rem !important;
+        border: 1px solid transparent !important;
+        transition: all 0.2s ease !important;
+    }
+    div[data-baseweb="tab"]:hover {
+        background-color: var(--light-sky) !important;
+        color: var(--deep-navy) !important;
+    }
+    div[data-baseweb="tab"][aria-selected="true"] {
+        background-color: var(--deep-navy) !important;
+        color: var(--neon-lime) !important;
+        border: 1px solid var(--deep-navy) !important;
+        box-shadow: 0 4px 14px rgba(37, 58, 130, 0.3) !important;
+    }
+
+    /* Chat Message Bubbles - Explicit Dual Shading */
+    .user-bubble {
+        background-color: var(--bright-pink);
+        border: 2px solid var(--rich-violet);
+        border-radius: 16px 16px 4px 16px;
+        padding: 14px 18px;
+        margin-bottom: 14px;
+        color: var(--deep-navy);
+        box-shadow: 0 2px 8px rgba(255, 178, 247, 0.25);
+    }
+    .user-label {
+        font-size: 0.72rem;
         font-weight: 800;
-        color: var(--midnight);
-        margin-top: 4px;
+        text-transform: uppercase;
+        color: var(--deep-navy);
+        margin-bottom: 4px;
+        letter-spacing: 0.05em;
+    }
+    .user-text {
+        font-size: 0.95rem;
+        color: var(--deep-navy);
+        font-weight: 500;
+        line-height: 1.5;
+    }
+
+    .assistant-bubble {
+        background-color: var(--light-sky);
+        border: 2px solid var(--periwinkle);
+        border-left: 6px solid var(--deep-navy);
+        border-radius: 16px 16px 16px 4px;
+        padding: 16px 20px;
+        margin-bottom: 14px;
+        color: var(--deep-navy);
+        box-shadow: 0 4px 12px rgba(37, 58, 130, 0.08);
+    }
+    .assistant-label {
+        font-size: 0.72rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        color: var(--deep-navy);
+        margin-bottom: 6px;
+        letter-spacing: 0.05em;
+    }
+    .assistant-text {
+        font-size: 0.95rem;
+        color: var(--deep-navy);
+        line-height: 1.55;
+    }
+
+    /* Citation Tags */
+    .citation-chip {
+        display: inline-block;
+        background-color: #ffffff;
+        color: var(--deep-navy);
+        border: 1.5px solid var(--deep-navy);
+        border-radius: 20px;
+        padding: 3px 12px;
+        font-size: 0.78rem;
+        font-weight: 700;
+        margin: 4px 6px 4px 0px;
+        box-shadow: 0 2px 4px rgba(37, 58, 130, 0.08);
+        transition: all 0.2s ease;
+    }
+    .citation-chip:hover {
+        background-color: var(--neon-lime);
+        border-color: var(--deep-navy);
+        transform: translateY(-1px);
+    }
+
+    /* Escalation Banner */
+    .escalation-banner {
+        background-color: var(--bright-pink);
+        border: 2px solid var(--deep-navy);
+        border-radius: 12px;
+        padding: 12px 16px;
+        margin-top: 10px;
+        color: var(--deep-navy);
+        font-weight: 700;
+        font-size: 0.88rem;
+    }
+
+    /* Metrics Cards */
+    .metric-box-sky {
+        background-color: var(--light-sky);
+        border: 2px solid var(--periwinkle);
+        border-radius: 14px;
+        padding: 18px 22px;
+        margin-bottom: 14px;
+    }
+    .metric-box-pink {
+        background-color: var(--bright-pink);
+        border: 2px solid var(--rich-violet);
+        border-radius: 14px;
+        padding: 18px 22px;
+        margin-bottom: 14px;
+    }
+    .metric-label-text {
+        font-size: 0.80rem;
+        font-weight: 800;
+        color: var(--deep-navy);
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+    }
+    .metric-number-text {
+        font-size: 2.2rem;
+        font-weight: 800;
+        color: var(--deep-navy);
+        margin-top: 2px;
         line-height: 1.1;
     }
 
-    /* Buttons in Sidebar & App */
+    /* Buttons */
     .stButton > button {
-        border-radius: 10px;
-        border: 1.5px solid var(--lavender);
-        background-color: #ffffff;
-        color: var(--midnight);
-        font-weight: 600;
-        transition: all 0.2s ease;
-        padding: 8px 14px;
+        background-color: #ffffff !important;
+        border: 2px solid var(--periwinkle) !important;
+        color: var(--deep-navy) !important;
+        font-weight: 700 !important;
+        border-radius: 10px !important;
+        padding: 8px 14px !important;
+        transition: all 0.2s ease !important;
     }
     .stButton > button:hover {
-        background-color: var(--sapphire);
-        color: #ffffff !important;
-        border-color: var(--midnight);
-        transform: translateY(-1px);
-        box-shadow: 0 4px 12px rgba(66, 107, 194, 0.25);
+        background-color: var(--neon-lime) !important;
+        border-color: var(--deep-navy) !important;
+        color: var(--deep-navy) !important;
+        transform: translateY(-1px) !important;
+        box-shadow: 0 4px 12px rgba(37, 58, 130, 0.2) !important;
     }
 
-    /* Chat Input Styling */
+    /* Chat Input */
     div[data-testid="stChatInput"] {
-        border-radius: 16px;
-        border: 1.5px solid var(--lavender);
-        background-color: #ffffff;
-        box-shadow: 0 4px 14px rgba(11, 25, 87, 0.06);
+        border-radius: 14px !important;
+        border: 2px solid var(--periwinkle) !important;
+        background-color: #ffffff !important;
+        box-shadow: 0 4px 14px rgba(37, 58, 130, 0.08) !important;
     }
     div[data-testid="stChatInput"]:focus-within {
-        border-color: var(--sapphire);
-        box-shadow: 0 0 0 3px rgba(66, 107, 194, 0.18);
+        border-color: var(--deep-navy) !important;
+        box-shadow: 0 0 0 3px rgba(136, 162, 255, 0.35) !important;
     }
 
     /* Expanders */
-    .streamlit-expanderHeader {
-        background-color: rgba(255, 255, 255, 0.85) !important;
-        border-radius: 10px !important;
-        font-weight: 600 !important;
-        color: var(--midnight) !important;
-    }
     div[data-testid="stExpander"] {
-        background-color: #ffffff;
-        border: 1px solid var(--lavender);
-        border-radius: 12px;
-        box-shadow: 0 2px 6px rgba(11, 25, 87, 0.03);
-        margin-bottom: 12px;
+        background-color: #ffffff !important;
+        border: 2px solid var(--light-sky) !important;
+        border-radius: 12px !important;
+        margin-bottom: 12px !important;
     }
 
-    /* Quick Feature Cards */
-    .feature-card {
-        background: #ffffff;
-        border: 1.5px solid var(--lavender);
+    /* Welcome guidance feature cards */
+    .guide-card {
+        background-color: #ffffff;
+        border: 2px solid var(--periwinkle);
+        border-top: 5px solid var(--deep-navy);
         border-radius: 12px;
         padding: 16px;
-        box-shadow: 0 2px 8px rgba(11, 25, 87, 0.04);
-        margin-bottom: 10px;
+        height: 100%;
+        box-shadow: 0 3px 10px rgba(37, 58, 130, 0.06);
     }
-    .feature-card h4 {
-        margin: 0 0 6px 0;
-        color: var(--midnight);
-        font-size: 0.98rem;
+    .guide-title {
+        font-weight: 800;
+        font-size: 0.95rem;
+        color: var(--deep-navy);
+        margin-bottom: 6px;
     }
-    .feature-card p {
-        margin: 0;
-        color: #4a5568;
+    .guide-desc {
         font-size: 0.85rem;
-        line-height: 1.4;
+        color: #3b4d82;
+        line-height: 1.45;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -284,46 +333,43 @@ if "session_thread_id" not in st.session_state:
 # ----------------- SIDEBAR -----------------
 with st.sidebar:
     st.markdown("""
-    <div style='display: flex; align-items: center; gap: 10px; margin-bottom: 14px;'>
-        <div style='background: #0b1957; color: white; width: 36px; height: 36px; border-radius: 9px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem;'>🛍️</div>
-        <div>
-            <div style='font-weight: 800; font-size: 1.15rem; color: #0b1957; line-height: 1.1;'>NovaMart</div>
-            <div style='font-size: 0.78rem; color: #426bc2; font-weight: 600;'>Agent Control Center</div>
-        </div>
+    <div style='padding-bottom: 12px; border-bottom: 2px solid #88A2FF; margin-bottom: 16px;'>
+        <div style='font-weight: 800; font-size: 1.25rem; color: #253A82; letter-spacing: -0.02em;'>NOVAMART</div>
+        <div style='display: inline-block; background-color: #E3FC87; color: #253A82; font-size: 0.72rem; font-weight: 800; padding: 2px 8px; border-radius: 12px; margin-top: 4px; border: 1px solid #253A82;'>CONTROL CONSOLE</div>
     </div>
     """, unsafe_allow_html=True)
     
     # API Key Configuration
-    st.markdown("### 🔑 LLM Provider")
+    st.markdown("### LLM Provider Configuration")
     env_key = os.getenv("GEMINI_API_KEY", "")
     api_key_input = st.text_input(
         "Gemini API Key",
         value=env_key,
         type="password",
-        help="Paste your Google AI Studio Gemini API Key here. If blank, smart offline fallback rules apply."
+        help="Google AI Studio Gemini API Key. If left blank, offline heuristic logic executes."
     )
     
     if api_key_input:
         os.environ["GEMINI_API_KEY"] = api_key_input
         llm = get_llm_service(api_key=api_key_input)
         if llm.is_configured():
-            st.success("🟢 Gemini API: Connected", icon="✅")
+            st.markdown("<div style='background: #E3FC87; color: #253A82; padding: 6px 10px; border-radius: 8px; font-weight: 700; font-size: 0.82rem; border: 1px solid #253A82;'>STATUS: GEMINI API CONNECTED</div>", unsafe_allow_html=True)
         else:
-            st.warning("🟡 Gemini API: Initializing...")
+            st.markdown("<div style='background: #FFB2F7; color: #253A82; padding: 6px 10px; border-radius: 8px; font-weight: 700; font-size: 0.82rem;'>STATUS: INITIALIZING API...</div>", unsafe_allow_html=True)
     else:
-        st.info("ℹ️ Running in **Smart Simulation Mode** (No API Key). Enter an API key above for full LLM generation.", icon="💡")
+        st.markdown("<div style='background: #C0E0FF; color: #253A82; padding: 6px 10px; border-radius: 8px; font-weight: 600; font-size: 0.82rem; border: 1px solid #88A2FF;'>MODE: SIMULATION (OFFLINE VERIFIED)</div>", unsafe_allow_html=True)
 
-    st.markdown("---")
+    st.markdown("<br>", unsafe_allow_html=True)
     
     # Quick Test Presets
-    st.markdown("### 🧪 Quick Test Scenarios")
+    st.markdown("### Benchmark Test Scenarios")
     quick_queries = [
-        ("📦 Policy Return Window", "What is the return window and how much is the return shipping fee?"),
-        ("🎧 Product Specs", "What is the battery life and water resistance of the AuraSound Pro headphones?"),
-        ("🔄 Multi-turn Follow-up", "Does it support multipoint Bluetooth pairing?"),
-        ("🚚 Track Order (In Transit)", "Where is my order ORD-98214?"),
-        ("🏷️ Return Request (Eligible)", "I want to return my order ORD-76150."),
-        ("🚨 Human Escalation", "This service is terrible and I demand to speak to a human manager immediately!")
+        ("Policy: Return Window & Fees", "What is the return window and how much is the return shipping fee?"),
+        ("Specs: AuraSound Pro Specifications", "What is the battery life and water resistance of the AuraSound Pro headphones?"),
+        ("Multi-Turn: Bluetooth Multipoint Follow-up", "Does it support multipoint Bluetooth pairing?"),
+        ("Order Tracking: ORD-98214 Status", "Where is my order ORD-98214?"),
+        ("Return Check: ORD-76150 Eligibility", "I want to return my order ORD-76150."),
+        ("Escalation: Request Human Specialist", "This service is terrible and I demand to speak to a human manager immediately!")
     ]
 
     for label, query_text in quick_queries:
@@ -331,94 +377,111 @@ with st.sidebar:
             st.session_state.current_prompt = query_text
 
     st.markdown("---")
-    if st.button("🗑️ Clear Conversation", use_container_width=True):
+    if st.button("Clear Conversation History", use_container_width=True):
         st.session_state.messages = []
         st.session_state.last_steps = []
         st.rerun()
 
-# ----------------- MAIN INTERFACE -----------------
+# ----------------- MAIN INTERFACE HERO -----------------
 st.markdown("""
-<div class='hero-header'>
-    <div class='hero-title'>
-        <span>🛍️ NovaMart Intelligent Support Assistant</span>
+<div class='hero-container'>
+    <div class='hero-title-text'>NovaMart Intelligent Support Agent</div>
+    <div class='hero-sub-text'>
+        Stateful LangGraph State Machine &bull; Corrective RAG (CRAG) Verification Gate &bull; Deterministic Human-in-the-Loop Escalation
     </div>
-    <div class='hero-subtitle'>
-        Enterprise-grade customer care powered by a stateful <b>LangGraph cyclic state machine</b>, <b>Corrective RAG (CRAG)</b> verification, and <b>Human-in-the-Loop</b> escalation.
-    </div>
-    <div class='pill-badges-row'>
-        <span class='hero-pill glow'>⚡ LangGraph Cyclic Graph</span>
-        <span class='hero-pill glow'>🛡️ CRAG Relevance Gate (τ ≥ 0.30)</span>
-        <span class='hero-pill glow'>🔍 Dual-Partitioned Retrieval</span>
-        <span class='hero-pill'>👨‍💼 Human-in-the-Loop Escalation</span>
+    <div class='badge-strip'>
+        <span class='brand-badge badge-lime'>LangGraph Cyclic Graph</span>
+        <span class='brand-badge badge-periwinkle'>CRAG Relevance Gate (Score &ge; 0.30)</span>
+        <span class='brand-badge badge-pink'>Dual-Partitioned Retrieval</span>
+        <span class='brand-badge badge-violet'>Human Operator Desk</span>
     </div>
 </div>
 """, unsafe_allow_html=True)
 
 tab_chat, tab_graph, tab_human = st.tabs([
-    "💬 Customer Support Chat",
-    "🧠 LangGraph Workflow & State Inspector",
-    "👨‍💼 Human Agent Desk (HITL)"
+    "Customer Support Chat",
+    "LangGraph Execution Inspector",
+    "Human Agent Desk (HITL)"
 ])
 
 # ----------------- TAB 1: CUSTOMER CHAT -----------------
 with tab_chat:
-    # If no messages yet, show nice welcome guidance cards
+    # If no messages yet, show clean guide cards
     if not st.session_state.messages:
-        col_w1, col_w2, col_w3 = st.columns(3)
-        with col_w1:
+        col_g1, col_g2, col_g3 = st.columns(3)
+        with col_g1:
             st.markdown("""
-            <div class='feature-card'>
-                <h4>📦 Policy & Shipping</h4>
-                <p>Ask about return policies, 30-day coverage, warranty terms, and international freight rules.</p>
+            <div class='guide-card'>
+                <div class='guide-title'>Corporate Policies & Terms</div>
+                <div class='guide-desc'>Query return windows, fee deductions, international freight rules, and limited warranty coverage.</div>
             </div>
             """, unsafe_allow_html=True)
-        with col_w2:
-            with st.container():
-                st.markdown("""
-                <div class='feature-card'>
-                    <h4>🎧 Product Specs & Specs</h4>
-                    <p>Troubleshoot hardware, battery endurance, pairing, and error codes for NovaMart electronics.</p>
-                </div>
-                """, unsafe_allow_html=True)
-        with col_w3:
+        with col_g2:
             st.markdown("""
-            <div class='feature-card'>
-                <h4>🚚 Live Order Operations</h4>
-                <p>Provide an order ID like <code>ORD-98214</code> to track live transit or verify return eligibility.</p>
+            <div class='guide-card'>
+                <div class='guide-title'>Hardware Technical Specs</div>
+                <div class='guide-desc'>Lookup specifications, battery limits, pairing protocols, and error codes across NovaMart products.</div>
+            </div>
+            """, unsafe_allow_html=True)
+        with col_g3:
+            st.markdown("""
+            <div class='guide-card'>
+                <div class='guide-title'>Transactional Operations</div>
+                <div class='guide-desc'>Track shipment status via order IDs (e.g., ORD-98214) or calculate 30-day statutory return eligibility.</div>
             </div>
             """, unsafe_allow_html=True)
 
-    # Display message history
+    # Render Chat History with visible contrasting shades
     for msg in st.session_state.messages:
         role = msg.get("role", "user")
-        with st.chat_message(role):
-            st.markdown(msg.get("content", ""))
-            
-            # Show citations if present
-            if msg.get("citations"):
-                with st.expander("📚 Verified Source Citations"):
-                    for c in msg["citations"]:
-                        st.markdown(f"<span class='citation-tag'>📄 {c}</span>", unsafe_allow_html=True)
-            
-            # Show escalation alert if present
-            if msg.get("is_escalated"):
-                st.warning(f"⚠️ **Escalated to Human Support** | Ticket ID: `{msg.get('ticket_id', 'N/A')}`")
+        content = msg.get("content", "")
+        citations = msg.get("citations", [])
+        is_escalated = msg.get("is_escalated", False)
+        ticket_id = msg.get("ticket_id")
 
-    # Chat input
+        if role == "user":
+            st.markdown(f"""
+            <div class='user-bubble'>
+                <div class='user-label'>Customer Query</div>
+                <div class='user-text'>{content}</div>
+            </div>
+            """, unsafe_allow_html=True)
+        else:
+            citations_html = ""
+            if citations:
+                chips = "".join([f"<span class='citation-chip'>Source: {c}</span>" for c in citations])
+                citations_html = f"<div style='margin-top: 10px; padding-top: 8px; border-top: 1px solid #88A2FF;'><div style='font-size: 0.72rem; font-weight: 800; color: #253A82; text-transform: uppercase; margin-bottom: 4px;'>Verified Source Citations:</div>{chips}</div>"
+
+            escalation_html = ""
+            if is_escalated:
+                escalation_html = f"""
+                <div class='escalation-banner'>
+                    [ESCALATION TRIGGERED] Customer inquiry escalated to Human Operator Desk. Priority Ticket ID: <code>{ticket_id}</code>
+                </div>
+                """
+
+            st.markdown(f"""
+            <div class='assistant-bubble'>
+                <div class='assistant-label'>NovaMart Support Agent (Grounded Synthesis)</div>
+                <div class='assistant-text'>{content}</div>
+                {citations_html}
+                {escalation_html}
+            </div>
+            """, unsafe_allow_html=True)
+
+    # Chat Input Box
     prompt_to_send = None
     if "current_prompt" in st.session_state and st.session_state.current_prompt:
         prompt_to_send = st.session_state.current_prompt
         st.session_state.current_prompt = None
     else:
-        chat_val = st.chat_input("Type your question (e.g., 'What is the return window for headphones?' or 'Where is ORD-98214?')...")
+        chat_val = st.chat_input("Enter customer inquiry or operational order query (e.g., 'Where is ORD-98214?')...")
         if chat_val:
             prompt_to_send = chat_val
 
     if prompt_to_send:
         # Append User Message
         st.session_state.messages.append({"role": "user", "content": prompt_to_send})
-        with st.chat_message("user"):
-            st.markdown(prompt_to_send)
 
         # Prepare Graph State
         graph = get_support_graph()
@@ -443,56 +506,45 @@ with tab_chat:
             "execution_steps": []
         }
 
-        with st.chat_message("assistant"):
-            with st.spinner("Agent orchestrating LangGraph workflow..."):
-                final_state = graph.invoke(initial_state, config=thread_config)
-                
-                resp_text = final_state.get("response", "I'm sorry, I could not process that request.")
-                citations = final_state.get("citations", [])
-                is_escalated = final_state.get("is_escalated", False)
-                ticket_id = final_state.get("ticket_id")
+        with st.spinner("Executing LangGraph state machine..."):
+            final_state = graph.invoke(initial_state, config=thread_config)
+            
+            resp_text = final_state.get("response", "Unable to process the request.")
+            citations = final_state.get("citations", [])
+            is_escalated = final_state.get("is_escalated", False)
+            ticket_id = final_state.get("ticket_id")
 
-                st.markdown(resp_text)
-                
-                if citations:
-                    with st.expander("📚 Verified Source Citations"):
-                        for c in citations:
-                            st.markdown(f"<span class='citation-tag'>📄 {c}</span>", unsafe_allow_html=True)
-                
-                if is_escalated:
-                    st.warning(f"⚠️ **Escalated to Human Support** | Priority Ticket ID: `{ticket_id}`")
-
-                # Store assistant response and execution steps
-                st.session_state.messages.append({
-                    "role": "assistant",
-                    "content": resp_text,
-                    "citations": citations,
-                    "is_escalated": is_escalated,
-                    "ticket_id": ticket_id
-                })
-                st.session_state.last_steps = final_state.get("execution_steps", [])
-                st.rerun()
+            # Store assistant response and execution steps
+            st.session_state.messages.append({
+                "role": "assistant",
+                "content": resp_text,
+                "citations": citations,
+                "is_escalated": is_escalated,
+                "ticket_id": ticket_id
+            })
+            st.session_state.last_steps = final_state.get("execution_steps", [])
+            st.rerun()
 
 # ----------------- TAB 2: LANGGRAPH WORKFLOW INSPECTOR -----------------
 with tab_graph:
-    st.subheader("🔍 Real-Time LangGraph Execution Trace")
-    st.markdown("Inspect how the LangGraph State Machine routed the query, rewrote multi-turn context, retrieved documents, and graded relevance.")
+    st.subheader("Real-Time LangGraph Execution Trace")
+    st.markdown("Direct inspection of state transitions, entity rewriting, document retrieval confidence, and CRAG relevance verification.")
 
     if not st.session_state.last_steps:
-        st.info("No query has been executed yet. Send a message in the Chat tab or click a Quick Test Scenario to see the live graph trace.")
+        st.info("No query has been executed yet. Send a query in the Chat tab or click a Benchmark Test Scenario in the sidebar.")
     else:
         col1, col2 = st.columns([1, 1])
 
         with col1:
-            st.markdown("### 📋 Step-by-Step Node Execution")
+            st.markdown("### Node Execution Sequence")
             for idx, step in enumerate(st.session_state.last_steps):
-                status_icon = "✅" if step["status"] == "completed" else "⚠️"
-                with st.expander(f"{status_icon} Step {idx+1}: **{step['title']}** (`{step['node']}`)", expanded=True):
+                status_label = "[COMPLETED]" if step["status"] == "completed" else "[ATTENTION]"
+                with st.expander(f"Step {idx+1}: {step['title']} ({step['node']}) {status_label}", expanded=True):
                     for k, v in step.get("details", {}).items():
                         st.markdown(f"- **{k.replace('_', ' ').title()}:** `{v}`")
 
         with col2:
-            st.markdown("### 🕸️ LangGraph Architecture Diagram")
+            st.markdown("### LangGraph Decision Graph")
             st.markdown("""
 ```mermaid
 flowchart TD
@@ -525,8 +577,8 @@ flowchart TD
 
 # ----------------- TAB 3: HUMAN AGENT DESK (HITL) -----------------
 with tab_human:
-    st.subheader("👨‍💼 Human Support Escalation Portal")
-    st.markdown("Unresolved queries, low-confidence retrievals, and frustrated customer messages are automatically routed here for live human triage.")
+    st.subheader("Human Support Escalation Portal")
+    st.markdown("Automated priority queue for low-confidence retrievals, out-of-domain queries, and frustrated customer interactions.")
 
     tickets = load_tickets()
     
@@ -535,38 +587,40 @@ with tab_human:
         open_count = sum(1 for t in tickets if t.get("status") == "OPEN")
         
         st.markdown(f"""
-        <div class='custom-metric-card'>
-            <div class='custom-metric-title'>Total Escalated Tickets</div>
-            <div class='custom-metric-value'>{len(tickets)}</div>
+        <div class='metric-box-sky'>
+            <div class='metric-label-text'>Total Escalated Tickets</div>
+            <div class='metric-number-text'>{len(tickets)}</div>
         </div>
-        <div class='custom-metric-card'>
-            <div class='custom-metric-title'>Open Pending Reviews</div>
-            <div class='custom-metric-value' style='color: {'#dc2626' if open_count > 0 else '#16a34a'};'>{open_count}</div>
+        <div class='metric-box-pink'>
+            <div class='metric-label-text'>Open Pending Reviews</div>
+            <div class='metric-number-text'>{open_count}</div>
         </div>
         """, unsafe_allow_html=True)
 
     with col_t2:
         if not tickets:
-            st.success("🎉 No escalated tickets currently pending! The automated agent is successfully resolving incoming customer queries.")
+            st.markdown("<div style='background: #E3FC87; color: #253A82; padding: 14px; border-radius: 10px; font-weight: 700; border: 1.5px solid #253A82;'>NO PENDING ESCALATIONS: All customer inquiries resolved autonomously.</div>", unsafe_allow_html=True)
         else:
             for ticket in tickets:
-                status_color = "🔴" if ticket.get("status") == "OPEN" else "🟢"
-                with st.expander(f"{status_color} Ticket `{ticket['ticket_id']}` - Status: **{ticket.get('status')}** ({ticket.get('created_at')})", expanded=(ticket.get('status') == "OPEN")):
+                is_open = (ticket.get("status") == "OPEN")
+                status_badge = "<span style='background: #E3FC87; color: #253A82; padding: 2px 8px; border-radius: 10px; font-weight: 800; border: 1px solid #253A82;'>OPEN</span>" if is_open else "<span style='background: #88A2FF; color: white; padding: 2px 8px; border-radius: 10px; font-weight: 700;'>RESOLVED</span>"
+                
+                with st.expander(f"Ticket {ticket['ticket_id']} &bull; Status: {ticket.get('status')} ({ticket.get('created_at')})", expanded=is_open):
                     st.markdown(f"**Customer Query:** *\"{ticket.get('customer_query')}\"*")
-                    st.markdown(f"**Escalation Reason:** {ticket.get('reason')}")
-                    st.markdown(f"**Sentiment Detected:** `{ticket.get('sentiment')}`")
+                    st.markdown(f"**Escalation Reason:** `{ticket.get('reason')}`")
+                    st.markdown(f"**Customer Sentiment:** `{ticket.get('sentiment')}`")
                     if ticket.get("order_id"):
-                        st.markdown(f"**Related Order:** `{ticket.get('order_id')}`")
+                        st.markdown(f"**Associated Order:** `{ticket.get('order_id')}`")
 
-                    if ticket.get("status") == "OPEN":
+                    if is_open:
                         st.markdown("---")
-                        human_note = st.text_area(f"Human Specialist Response ({ticket['ticket_id']})", placeholder="Type response or action taken...")
+                        human_note = st.text_area(f"Specialist Resolution Notes ({ticket['ticket_id']})", placeholder="Enter resolution notes or dispatched customer message...")
                         if st.button(f"Mark Resolved & Dispatch ({ticket['ticket_id']})", key=f"btn_{ticket['ticket_id']}"):
                             if human_note.strip():
                                 resolve_ticket(ticket["ticket_id"], human_note)
-                                st.success("Ticket marked as RESOLVED!")
+                                st.success("Ticket status updated to RESOLVED.")
                                 st.rerun()
                             else:
-                                st.error("Please enter response notes before resolving.")
+                                st.error("Resolution notes are required prior to ticket closure.")
                     else:
-                        st.info(f"**Resolution Notes:** {ticket.get('agent_response', 'No notes.')} *(Resolved at {ticket.get('resolved_at')})*")
+                        st.info(f"Resolution Notes: {ticket.get('agent_response', 'No notes recorded.')} (Resolved at {ticket.get('resolved_at')})")
