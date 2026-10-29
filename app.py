@@ -45,6 +45,13 @@ st.markdown("""
         background-image: none !important;
     }
 
+    /* Hide Streamlit Default Deploy Button */
+    .stDeployButton, 
+    [data-testid="stToolbarActions"],
+    header[data-testid="stHeader"] .stDeployButton {
+        display: none !important;
+    }
+
     /* Sidebar Styling */
     section[data-testid="stSidebar"] {
         background-color: #eef5fc !important;
