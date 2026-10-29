@@ -39,19 +39,19 @@ st.markdown("""
         color: var(--deep-navy);
     }
 
-    /* Canvas background - Soft Elegant Lavender */
+    /* Canvas background - Warm Editorial Beige */
     .stApp {
-        background-color: #f5f2f9 !important;
+        background-color: #fbf8f3 !important;
         background-image: 
-            radial-gradient(at 0% 0%, rgba(171, 157, 255, 0.18) 0px, transparent 55%),
-            radial-gradient(at 100% 100%, rgba(255, 178, 247, 0.14) 0px, transparent 55%) !important;
+            radial-gradient(at 0% 0%, rgba(243, 237, 226, 0.7) 0px, transparent 55%),
+            radial-gradient(at 100% 100%, rgba(235, 227, 211, 0.45) 0px, transparent 55%) !important;
         background-attachment: fixed;
     }
 
-    /* Sidebar Styling - Distinct Twilight Lavender Panel */
+    /* Sidebar Styling - Warm Oat / Sand Beige Panel */
     section[data-testid="stSidebar"] {
-        background: linear-gradient(180deg, #eae3f4 0%, #e4daf1 100%) !important;
-        border-right: 2px solid var(--rich-violet) !important;
+        background: linear-gradient(180deg, #f2ece0 0%, #ebe3d3 100%) !important;
+        border-right: 2px solid #dcd3c1 !important;
     }
     section[data-testid="stSidebar"] h1, 
     section[data-testid="stSidebar"] h2, 
@@ -333,7 +333,7 @@ if "session_thread_id" not in st.session_state:
 # ----------------- SIDEBAR -----------------
 with st.sidebar:
     st.markdown("""
-    <div style='padding-bottom: 12px; border-bottom: 2px solid #AB9DFF; margin-bottom: 16px;'>
+    <div style='padding-bottom: 12px; border-bottom: 2px solid #dcd3c1; margin-bottom: 16px;'>
         <div style='font-weight: 800; font-size: 1.25rem; color: #253A82; letter-spacing: -0.02em;'>NOVAMART</div>
         <div style='display: inline-block; background-color: #E3FC87; color: #253A82; font-size: 0.72rem; font-weight: 800; padding: 2px 8px; border-radius: 12px; margin-top: 4px; border: 1px solid #253A82;'>CONTROL CONSOLE</div>
     </div>

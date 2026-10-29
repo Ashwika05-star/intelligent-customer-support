@@ -9,7 +9,7 @@ gatherUsageStats = false
 
 [theme]
 primaryColor = "#253A82"
-backgroundColor = "#f5f2f9"
-secondaryBackgroundColor = "#eae3f4"
+backgroundColor = "#fbf8f3"
+secondaryBackgroundColor = "#f2ece0"
 textColor = "#253A82"
 font = "sans serif"
